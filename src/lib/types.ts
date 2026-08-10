@@ -7,6 +7,8 @@ export type Participant = {
   telegram: string;
   email: string;
   needsLunch: boolean | null;
+  checkedIn: boolean;
+  checkedInAt: string | null;
   createdAt: string;
 };
 

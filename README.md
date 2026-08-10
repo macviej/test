@@ -6,11 +6,10 @@
 
 Next.js + TypeScript + Tailwind · деплой на Vercel
 
-## Сейчас (MVP)
+## Сейчас
 
-1. Welcome
-2. Регистрация (контакты + обед)
-3. QR-пропуск
+1. Welcome + регистрация + QR
+2. Админка: логин, список, сканер check-in
 
 ## Запуск
 
@@ -21,8 +20,10 @@ npm run dev
 
 Открыть http://localhost:3002
 
+Админка: http://localhost:3002/admin/login  
+Логин/пароль по умолчанию: `admin` / `admin` (через `.env.local`)
+
 ## Дальше
 
-- Админка + сканер QR
 - Q&A
 - Postgres вместо файлового стора

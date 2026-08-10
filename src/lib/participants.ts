@@ -23,12 +23,36 @@ function dataPath() {
   return path.join(process.cwd(), "data", "participants.json");
 }
 
+function normalizeParticipant(
+  raw: Partial<Participant> & {
+    id?: string;
+    code?: string;
+    createdAt?: string;
+  },
+): Participant {
+  return {
+    id: raw.id || randomBytes(8).toString("hex"),
+    code: raw.code || "IGC-2026-000",
+    firstName: raw.firstName || "",
+    lastName: raw.lastName || "",
+    phone: raw.phone || "",
+    telegram: raw.telegram || "",
+    email: raw.email || "",
+    needsLunch: raw.needsLunch ?? null,
+    checkedIn: Boolean(raw.checkedIn),
+    checkedInAt: raw.checkedInAt ?? null,
+    createdAt: raw.createdAt || new Date().toISOString(),
+  };
+}
+
 async function readStore(): Promise<Store> {
   const memory = getMemoryStore();
   try {
     const raw = await fs.readFile(dataPath(), "utf8");
     const parsed = JSON.parse(raw) as Store;
-    memory.participants = parsed.participants ?? [];
+    memory.participants = (parsed.participants ?? []).map((p) =>
+      normalizeParticipant(p as Participant),
+    );
     memory.counter = parsed.counter ?? memory.participants.length;
     return memory;
   } catch {
@@ -65,6 +89,8 @@ export async function createParticipant(
     telegram: input.telegram.trim().replace(/^@/, ""),
     email: input.email.trim().toLowerCase(),
     needsLunch: input.needsLunch,
+    checkedIn: false,
+    checkedInAt: null,
     createdAt: new Date().toISOString(),
   };
 
@@ -82,4 +108,36 @@ export async function getParticipantByCode(
   return (
     store.participants.find((p) => p.code.toUpperCase() === normalized) ?? null
   );
+}
+
+export async function listParticipants(): Promise<Participant[]> {
+  const store = await readStore();
+  return [...store.participants].sort(
+    (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
+  );
+}
+
+export async function checkInParticipant(
+  code: string,
+): Promise<{ participant: Participant; alreadyCheckedIn: boolean } | null> {
+  const store = await readStore();
+  const normalized = code.trim().toUpperCase().replace(/^#/, "");
+  const index = store.participants.findIndex(
+    (p) => p.code.toUpperCase() === normalized,
+  );
+  if (index < 0) return null;
+
+  const current = normalizeParticipant(store.participants[index]);
+  if (current.checkedIn) {
+    return { participant: current, alreadyCheckedIn: true };
+  }
+
+  const updated: Participant = {
+    ...current,
+    checkedIn: true,
+    checkedInAt: new Date().toISOString(),
+  };
+  store.participants[index] = updated;
+  await writeStore(store);
+  return { participant: updated, alreadyCheckedIn: false };
 }
