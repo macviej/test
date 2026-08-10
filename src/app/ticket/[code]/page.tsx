@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
@@ -88,6 +89,12 @@ export default function TicketPage() {
             >
               Поделиться
             </Button>
+
+            <Link href="/qa" className="mt-3 w-full">
+              <Button type="button" variant="choice">
+                Перейти к Q&A
+              </Button>
+            </Link>
 
             <div className="mt-8 flex flex-col items-center gap-2">
               <p className="text-[14px] font-medium text-[#eee]">

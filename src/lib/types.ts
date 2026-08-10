@@ -21,3 +21,16 @@ export type RegisterInput = {
   needsLunch: boolean | null;
   consent: boolean;
 };
+
+export type QuestionStatus = "open" | "answered" | "hidden";
+
+export type Question = {
+  id: string;
+  text: string;
+  authorKey: string;
+  authorLabel: string;
+  likes: string[];
+  status: QuestionStatus;
+  createdAt: string;
+  answeredAt: string | null;
+};

@@ -39,6 +39,9 @@ export default function AdminHomePage() {
           <Link href="/admin/participants" className="w-full">
             <Button type="button">Spreadsheet</Button>
           </Link>
+          <Link href="/admin/qa" className="w-full">
+            <Button type="button">Q&A</Button>
+          </Link>
           <Button type="button" variant="ghost" className="mt-2" onClick={logout}>
             Выйти
           </Button>

@@ -10,6 +10,7 @@ Next.js + TypeScript + Tailwind · деплой на Vercel
 
 1. Welcome + регистрация + QR
 2. Админка: логин, список, сканер check-in
+3. Q&A: вопросы, лайки, модерация
 
 ## Запуск
 
@@ -20,10 +21,10 @@ npm run dev
 
 Открыть http://localhost:3002
 
-Админка: http://localhost:3002/admin/login  
-Логин/пароль по умолчанию: `admin` / `admin` (через `.env.local`)
+- Q&A: http://localhost:3002/qa
+- Админка: http://localhost:3002/admin/login (`admin` / `admin`)
 
 ## Дальше
 
-- Q&A
 - Postgres вместо файлового стора
+- Полировка UI 1:1 с Figma
