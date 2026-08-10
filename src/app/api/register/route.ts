@@ -1,0 +1,57 @@
+import { NextResponse } from "next/server";
+import { createParticipant } from "@/lib/participants";
+import type { RegisterInput } from "@/lib/types";
+
+function isEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = (await request.json()) as Partial<RegisterInput>;
+
+    const firstName = body.firstName?.trim() ?? "";
+    const lastName = body.lastName?.trim() ?? "";
+    const phone = body.phone?.trim() ?? "";
+    const telegram = body.telegram?.trim() ?? "";
+    const email = body.email?.trim() ?? "";
+    const needsLunch =
+      typeof body.needsLunch === "boolean" ? body.needsLunch : null;
+    const consent = Boolean(body.consent);
+
+    if (!firstName || !lastName || !phone || !email) {
+      return NextResponse.json(
+        { error: "Заполните обязательные поля" },
+        { status: 400 },
+      );
+    }
+
+    if (!isEmail(email)) {
+      return NextResponse.json({ error: "Некорректный e-mail" }, { status: 400 });
+    }
+
+    if (!consent) {
+      return NextResponse.json(
+        { error: "Нужно согласие на обработку данных" },
+        { status: 400 },
+      );
+    }
+
+    const participant = await createParticipant({
+      firstName,
+      lastName,
+      phone,
+      telegram,
+      email,
+      needsLunch,
+      consent,
+    });
+
+    return NextResponse.json({ participant });
+  } catch {
+    return NextResponse.json(
+      { error: "Не удалось сохранить регистрацию" },
+      { status: 500 },
+    );
+  }
+}
