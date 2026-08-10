@@ -39,3 +39,6 @@ next-env.d.ts
 # app data
 /data/
 *.db
+.vercel
+
+/src/generated/prisma

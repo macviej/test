@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Participant {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  firstName   String
+  lastName    String
+  phone       String
+  telegram    String    @default("")
+  email       String
+  needsLunch  Boolean?
+  checkedIn   Boolean   @default(false)
+  checkedInAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}
+
+model Question {
+  id          String         @id @default(cuid())
+  text        String
+  authorKey   String
+  authorLabel String         @default("Участник")
+  likes       String[]       @default([])
+  status      QuestionStatus @default(open)
+  createdAt   DateTime       @default(now())
+  answeredAt  DateTime?
+
+  @@index([status, createdAt])
+  @@index([authorKey])
+}
+
+model Counter {
+  id    String @id
+  value Int    @default(0)
+}
+
+enum QuestionStatus {
+  open
+  answered
+  hidden
+}

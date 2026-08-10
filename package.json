@@ -4,11 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3002",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "dotenv": "^17.4.2",
     "html5-qrcode": "^2.3.8",
     "next": "16.3.0",
     "qrcode": "^1.5.4",
@@ -23,6 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
+    "prisma": "^6.19.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

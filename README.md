@@ -24,7 +24,11 @@ npm run dev
 - Q&A: http://localhost:3002/qa
 - Админка: http://localhost:3002/admin/login (`admin` / `admin`)
 
+## База данных
+
+Postgres (Prisma). Нужен `DATABASE_URL` в `.env.local`.
+
 ## Дальше
 
-- Postgres вместо файлового стора
 - Полировка UI 1:1 с Figma
+- Кастомный домен
