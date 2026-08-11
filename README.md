@@ -22,11 +22,14 @@ npm run dev
 Открыть http://localhost:3002
 
 - Q&A: http://localhost:3002/qa
-- Админка: http://localhost:3002/admin/login (`admin` / `admin`)
+- Админка: http://localhost:3002/admin/login (логин/пароль из `.env.local`)
 
 ## Прод (Vercel)
 
 https://imagodeiconf.vercel.app
+
+Админка: https://imagodeiconf.vercel.app/admin/login  
+Креды задаются в Vercel → Environment Variables: `ADMIN_LOGIN`, `ADMIN_PASSWORD`, `ADMIN_SECRET` (в проде дефолта `admin`/`admin` больше нет).
 
 ## База данных
 
