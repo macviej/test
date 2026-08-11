@@ -91,14 +91,14 @@ export default function RegisterPage() {
       {step === 1 ? (
         <form
           onSubmit={goNext}
-          className="relative flex min-h-0 flex-1 flex-col gap-6 pb-[68px]"
+          className="relative flex min-h-0 flex-1 flex-col pb-[68px]"
         >
-          <div className="flex flex-col gap-6">
+          <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto">
             <h1 className="text-[18px] font-medium leading-6 text-[#eee]">
               Общая информация
             </h1>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 pb-4">
               <Field
                 label="Имя"
                 placeholder="Имя"
