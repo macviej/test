@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
-import { Button } from "@/components/Button";
 import { useAdminGuard } from "@/lib/use-admin-guard";
 
 type QaItem = {
@@ -66,20 +65,26 @@ export default function AdminQaPage() {
   return (
     <AppShell showBack backHref="/admin">
       <div className="flex flex-1 flex-col gap-4">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-[18px] font-medium text-[#eee]">Q&A</h1>
+        <div className="flex items-center justify-end gap-2">
           <button
             type="button"
             onClick={() => setUnansweredOnly((v) => !v)}
-            className={`rounded-lg px-3 py-2 text-[12px] font-medium ${
-              unansweredOnly ? "bg-[#eee] text-black" : "border border-[#eee] text-[#eee]"
-            }`}
+            className="flex h-8 items-center justify-center rounded-lg bg-[#eee] px-1.5"
+            aria-label="Фильтр"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/sort.svg" alt="" className="h-2.5 w-[15px]" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setUnansweredOnly((v) => !v)}
+            className="flex h-8 items-center rounded-lg bg-[#eee] px-3 text-[12px] font-medium text-black"
           >
             {unansweredOnly ? "неотвеченные" : "все"}
           </button>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto pb-4">
           {items.length === 0 ? (
             <p className="mt-10 text-center text-[14px] text-[#9da1ab]">
               Вопросов пока нет
@@ -88,52 +93,49 @@ export default function AdminQaPage() {
             items.map((q) => (
               <div
                 key={q.id}
-                className="rounded-[20px] border border-[#eee]/50 bg-white/10 p-4"
+                className="flex flex-col gap-2.5 rounded-[20px] bg-white/40 p-5"
               >
                 <p className="text-[14px] font-medium leading-5 text-[#eee]">
                   {q.text}
                 </p>
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-[12px] text-[#9da1ab]">
-                  <span>♥ {q.likeCount}</span>
-                  <span>
-                    {q.status === "answered" ? "отвечен" : "ожидает"}
-                  </span>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {q.status === "open" ? (
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-1">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/assets/like.svg" alt="" className="size-4" />
+                    <span className="text-[12px] font-light text-[#eee]">
+                      {q.likeCount}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {q.status === "answered" ? (
+                      <button
+                        type="button"
+                        onClick={() => reopen(q.id)}
+                        className="text-[11px] text-[#43c510]"
+                      >
+                        отвечен
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => markAnswered(q.id)}
+                        className="text-[11px] text-[#eee] underline"
+                      >
+                        отметить
+                      </button>
+                    )}
                     <button
                       type="button"
-                      onClick={() => markAnswered(q.id)}
-                      className="rounded-full border border-[#eee] px-3 py-1.5 text-[12px] text-[#eee]"
+                      onClick={() => remove(q.id)}
+                      className="text-[11px] text-[#9da1ab] underline"
                     >
-                      Отметить отвеченным
+                      удалить
                     </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => reopen(q.id)}
-                      className="rounded-full border border-[#eee] px-3 py-1.5 text-[12px] text-[#eee]"
-                    >
-                      Вернуть в открытые
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => remove(q.id)}
-                    className="rounded-full border border-[#d15a32] px-3 py-1.5 text-[12px] text-[#d15a32]"
-                  >
-                    Удалить
-                  </button>
+                  </div>
                 </div>
               </div>
             ))
           )}
-        </div>
-
-        <div className="mt-auto pt-4">
-          <Button type="button" variant="ghost" onClick={load}>
-            Обновить
-          </Button>
         </div>
       </div>
     </AppShell>

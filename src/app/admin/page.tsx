@@ -24,27 +24,42 @@ export default function AdminHomePage() {
   }
 
   return (
-    <AppShell>
-      <div className="flex flex-1 flex-col">
-        <h1 className="mb-10 text-center text-[18px] font-medium uppercase leading-6 text-[#eee]">
+    <AppShell
+      headerRight={
+        <button
+          type="button"
+          onClick={logout}
+          aria-label="Выйти"
+          className="size-6"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/logout.svg" alt="" className="size-6" />
+        </button>
+      }
+    >
+      <div className="relative flex flex-1 flex-col">
+        <h1 className="text-center text-[18px] font-medium uppercase leading-6 text-[#eee]">
           Панель
           <br />
           Администратора
         </h1>
 
-        <div className="mt-auto flex flex-col gap-4 pb-4">
+        <div className="absolute left-1/2 top-1/2 flex w-[240px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-6">
           <Link href="/admin/scanner" className="w-full">
-            <Button type="button">QR Code</Button>
+            <Button type="button" className="w-full">
+              Сканер QR
+            </Button>
           </Link>
           <Link href="/admin/participants" className="w-full">
-            <Button type="button">Spreadsheet</Button>
+            <Button type="button" variant="outline" className="w-full">
+              Таблица
+            </Button>
           </Link>
           <Link href="/admin/qa" className="w-full">
-            <Button type="button">Q&A</Button>
+            <Button type="button" variant="outline" className="w-full">
+              Q&A
+            </Button>
           </Link>
-          <Button type="button" variant="ghost" className="mt-2" onClick={logout}>
-            Выйти
-          </Button>
         </div>
       </div>
     </AppShell>

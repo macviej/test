@@ -2,7 +2,13 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
-  variant?: "primary" | "ghost" | "choice" | "choiceActive" | "textArrow";
+  variant?:
+    | "primary"
+    | "outline"
+    | "ghost"
+    | "choice"
+    | "choiceActive"
+    | "textArrow";
   arrow?: boolean;
 };
 
@@ -19,6 +25,8 @@ export function Button({
   const variants = {
     primary:
       "h-[52px] w-full gap-2 rounded-[20px] border border-[#eee] bg-[#eee] py-5 pl-4 pr-[9px] text-[16px] font-semibold uppercase leading-5 text-black",
+    outline:
+      "h-[52px] w-full gap-2 rounded-[20px] border border-[#eee] bg-transparent py-5 pl-4 pr-[9px] text-[16px] font-semibold uppercase leading-5 text-[#eee]",
     ghost:
       "h-auto w-auto gap-0 border-0 bg-transparent p-0 text-[14px] font-medium leading-5 text-[#eee]",
     choice:

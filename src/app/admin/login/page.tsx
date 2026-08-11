@@ -38,8 +38,8 @@ export default function AdminLoginPage() {
 
   return (
     <AppShell>
-      <div className="flex flex-1 flex-col">
-        <h1 className="mb-10 text-center text-[18px] font-medium uppercase leading-6 text-[#eee]">
+      <div className="relative flex flex-1 flex-col">
+        <h1 className="text-center text-[18px] font-medium uppercase leading-6 text-[#eee]">
           Панель
           <br />
           Администратора
@@ -47,7 +47,7 @@ export default function AdminLoginPage() {
 
         <form
           onSubmit={onSubmit}
-          className="mt-auto flex w-full flex-col gap-8 pb-8"
+          className="absolute left-0 right-0 top-1/2 flex w-full -translate-y-1/2 flex-col gap-8"
         >
           <div className="flex flex-col gap-4">
             <Field
