@@ -31,7 +31,12 @@ export default function RegisterPage() {
     event.preventDefault();
     setError("");
 
-    if (!form.firstName.trim() || !form.lastName.trim() || !form.phone.trim() || !form.email.trim()) {
+    if (
+      !form.firstName.trim() ||
+      !form.lastName.trim() ||
+      !form.phone.trim() ||
+      !form.email.trim()
+    ) {
       setError("Заполните все обязательные поля");
       return;
     }
@@ -78,114 +83,130 @@ export default function RegisterPage() {
   }
 
   return (
-    <AppShell showBack={step === 1} backHref="/">
+    <AppShell
+      showBack
+      backHref={step === 1 ? "/" : "/register"}
+      onBack={step === 2 ? () => setStep(1) : undefined}
+    >
       {step === 1 ? (
-        <form onSubmit={goNext} className="flex flex-1 flex-col gap-6 pb-20">
-          <h1 className="text-[18px] font-medium leading-6 text-[#eee]">
-            Общая информация
-          </h1>
-
+        <form
+          onSubmit={goNext}
+          className="relative flex min-h-0 flex-1 flex-col gap-6 pb-[68px]"
+        >
           <div className="flex flex-col gap-6">
-            <Field
-              label="Имя"
-              placeholder="Имя"
-              value={form.firstName}
-              onChange={(e) => update("firstName", e.target.value)}
-              required
-            />
-            <Field
-              label="Фамилия"
-              placeholder="Фамилия"
-              value={form.lastName}
-              onChange={(e) => update("lastName", e.target.value)}
-              required
-            />
-            <Field
-              label="Номер телефона"
-              placeholder="+375"
-              value={form.phone}
-              onChange={(e) => update("phone", e.target.value)}
-              required
-            />
-            <Field
-              label="Никнейм в Телеграм"
-              placeholder="@"
-              value={form.telegram}
-              onChange={(e) => update("telegram", e.target.value)}
-            />
-            <Field
-              label="E-mail"
-              type="email"
-              placeholder="E-mail"
-              value={form.email}
-              onChange={(e) => update("email", e.target.value)}
-              required
-            />
+            <h1 className="text-[18px] font-medium leading-6 text-[#eee]">
+              Общая информация
+            </h1>
 
-            <label className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => update("consent", !form.consent)}
-                className="flex size-6 items-center justify-center rounded-lg border border-[#eee] p-1"
-                aria-pressed={form.consent}
-              >
-                {form.consent ? (
-                  <span className="block size-full rounded-[4px] bg-[#eee]" />
-                ) : null}
-              </button>
-              <span className="text-[12px] font-medium leading-5 text-[#9da1ab]">
-                Я согласен с обработкой данных
-              </span>
-            </label>
-          </div>
+            <div className="flex flex-col gap-6">
+              <Field
+                label="Имя"
+                placeholder="Имя"
+                value={form.firstName}
+                onChange={(e) => update("firstName", e.target.value)}
+                required
+                autoComplete="given-name"
+              />
+              <Field
+                label="Фамилия"
+                placeholder="Фамилия"
+                value={form.lastName}
+                onChange={(e) => update("lastName", e.target.value)}
+                required
+                autoComplete="family-name"
+              />
+              <Field
+                label="Номер телефона"
+                placeholder="+375"
+                value={form.phone}
+                onChange={(e) => update("phone", e.target.value)}
+                required
+                inputMode="tel"
+                autoComplete="tel"
+              />
+              <Field
+                label="Никнейм в Телеграм"
+                placeholder="@"
+                value={form.telegram}
+                onChange={(e) => update("telegram", e.target.value)}
+                autoComplete="username"
+              />
+              <Field
+                label="E-mail"
+                type="email"
+                placeholder="E-mail"
+                value={form.email}
+                onChange={(e) => update("email", e.target.value)}
+                required
+                autoComplete="email"
+              />
 
-          {error ? <p className="text-[13px] text-[#d15a32]">{error}</p> : null}
-
-          <div className="mt-auto">
-            <Button type="submit">Далее</Button>
-          </div>
-        </form>
-      ) : (
-        <div className="flex flex-1 flex-col gap-6">
-          <button
-            type="button"
-            className="self-start text-[13px] text-[#9da1ab]"
-            onClick={() => setStep(1)}
-          >
-            ← Назад
-          </button>
-
-          <h1 className="text-[18px] font-medium leading-6 text-[#eee]">Обед</h1>
-
-          <div className="flex flex-col gap-3">
-            <p className="text-[14px] font-medium leading-5 text-[#eee]">
-              Нужен ли вам обед?
-            </p>
-            <div className="flex gap-4">
-              <Button
-                type="button"
-                variant={form.needsLunch === true ? "choiceActive" : "choice"}
-                onClick={() => update("needsLunch", true)}
-              >
-                Да
-              </Button>
-              <Button
-                type="button"
-                variant={form.needsLunch === false ? "choiceActive" : "choice"}
-                onClick={() => update("needsLunch", false)}
-              >
-                Нет
-              </Button>
+              <label className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => update("consent", !form.consent)}
+                  className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-[#eee] p-1"
+                  aria-pressed={form.consent}
+                  aria-label="Согласие на обработку данных"
+                >
+                  {form.consent ? (
+                    <span className="block size-full rounded-[4px] bg-[#eee]" />
+                  ) : null}
+                </button>
+                <span className="text-[12px] font-medium leading-5 text-[#9da1ab]">
+                  Я согласен с обработкой данных
+                </span>
+              </label>
             </div>
           </div>
 
           {error ? <p className="text-[13px] text-[#d15a32]">{error}</p> : null}
 
-          <div className="mt-auto">
-            <Button type="button" onClick={submit} disabled={loading}>
-              {loading ? "Сохраняем..." : "Завершить"}
-            </Button>
+          <div className="absolute inset-x-0 bottom-0">
+            <Button type="submit">Далее</Button>
           </div>
+        </form>
+      ) : (
+        <div className="relative flex min-h-0 flex-1 flex-col gap-6 pb-[68px]">
+          <div className="flex flex-1 flex-col gap-6">
+            <h1 className="text-[18px] font-medium leading-6 text-[#eee]">
+              Обед
+            </h1>
+
+            <div className="flex flex-col gap-3">
+              <p className="text-[14px] font-medium leading-5 text-[#eee]">
+                Нужен ли вам обед?
+              </p>
+              <div className="flex gap-4">
+                <Button
+                  type="button"
+                  variant={form.needsLunch === true ? "choiceActive" : "choice"}
+                  onClick={() => update("needsLunch", true)}
+                >
+                  Да
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    form.needsLunch === false ? "choiceActive" : "choice"
+                  }
+                  onClick={() => update("needsLunch", false)}
+                >
+                  Нет
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {error ? <p className="text-[13px] text-[#d15a32]">{error}</p> : null}
+
+          {form.needsLunch !== null ? (
+            <div className="absolute inset-x-0 bottom-0">
+              <Button type="button" onClick={submit} disabled={loading}>
+                {loading ? "Сохраняем..." : "Далее"}
+              </Button>
+            </div>
+          ) : null}
         </div>
       )}
     </AppShell>

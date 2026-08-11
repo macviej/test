@@ -6,6 +6,7 @@ type Props = {
   children: ReactNode;
   showBack?: boolean;
   backHref?: string;
+  onBack?: () => void;
   headerRight?: ReactNode;
 };
 
@@ -13,12 +14,35 @@ export function AppShell({
   children,
   showBack = false,
   backHref = "/",
+  onBack,
   headerRight,
 }: Props) {
+  const backControl = onBack ? (
+    <button
+      type="button"
+      onClick={onBack}
+      className="absolute left-0 top-1/2 flex h-6 w-[30px] -translate-y-1/2 items-center justify-center"
+      aria-label="Назад"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/assets/back.svg" alt="" className="h-6 w-[30px]" />
+    </button>
+  ) : (
+    <Link
+      href={backHref}
+      className="absolute left-0 top-1/2 flex h-6 w-[30px] -translate-y-1/2 items-center justify-center"
+      aria-label="Назад"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/assets/back.svg" alt="" className="h-6 w-[30px]" />
+    </Link>
+  );
+
   return (
     <div className="relative min-h-dvh overflow-hidden bg-black text-[#eee]">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-black" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/assets/stars-bg.png"
           alt=""
@@ -33,17 +57,9 @@ export function AppShell({
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5 pb-8 pt-5">
-        <header className="relative mb-8 flex h-10 items-center justify-center">
-          {showBack ? (
-            <Link
-              href={backHref}
-              className="absolute left-0 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center"
-              aria-label="Назад"
-            >
-              <img src="/assets/back.svg" alt="" className="h-6 w-[30px]" />
-            </Link>
-          ) : null}
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-[402px] flex-col px-5 pb-8 pt-5">
+        <header className="relative mb-8 flex h-10 shrink-0 items-center justify-center">
+          {showBack ? backControl : null}
           <Logo />
           {headerRight ? (
             <div className="absolute right-0 top-1/2 -translate-y-1/2">
