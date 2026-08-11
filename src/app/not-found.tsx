@@ -20,9 +20,9 @@ export default function NotFound() {
           </div>
           <Link
             href="/"
-            className="inline-flex w-full items-center justify-center gap-1 rounded-[20px] border border-[#eee] bg-[#eee] py-3 pl-8 pr-7 text-[14px] font-semibold leading-[18px] text-black"
+            className="inline-flex w-full items-center justify-center gap-1 rounded-[20px] border border-[#eee] bg-[#eee] py-3 pl-8 pr-7 text-[14px] font-semibold leading-[18px] text-[#000]"
           >
-            НА ГЛАВНУЮ
+            <span className="text-[#000]">НА ГЛАВНУЮ</span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/assets/arrow-up-right.svg"
