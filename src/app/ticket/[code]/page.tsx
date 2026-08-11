@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
@@ -115,10 +116,15 @@ export default function TicketPage() {
                 </p>
               </div>
 
-              <div className="mt-auto">
+              <div className="mt-auto flex flex-col gap-3">
                 <Button type="button" arrow onClick={inviteFriend}>
                   {t.invite}
                 </Button>
+                <Link href="/qa" className="w-full">
+                  <Button type="button" variant="outline">
+                    {t.askQuestion}
+                  </Button>
+                </Link>
               </div>
             </div>
 

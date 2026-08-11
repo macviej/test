@@ -34,7 +34,7 @@ const welcomeOpen: Record<Locale, WelcomeCopy> = {
     body: "В этом году нашей конференции исполняется 5 лет. Уже пятый год мы собираемся вместе, чтобы изучать Божье Слово, общаться, задавать важные вопросы и возрастать в познании Бога.",
     chips: ["Боровляны, Первомайская 23", "30 BYN", "7 ноября", "10:00"],
     cta: "Зарегистрироваться",
-    ticketLogin: "Уже есть билет",
+    ticketLogin: "Войти",
     cookiesText: "Для вашего удобства мы используем Кукисы.",
     cookiesOk: "Понятно",
   },
@@ -44,7 +44,7 @@ const welcomeOpen: Record<Locale, WelcomeCopy> = {
     body: "У гэтым годзе нашай канферэнцыі спаўняецца 5 гадоў. Ужо пяты год мы збіраемся разам, каб вывучаць Божае Слова, размаўляць, задаваць важныя пытанні і ўзрастаць у пазнанні Бога.",
     chips: ["Бараўляны, Першамайская 23", "30 BYN", "7 лістапада", "10:00"],
     cta: "Зарэгістравацца",
-    ticketLogin: "Ужо ёсць білет",
+    ticketLogin: "Увайсці",
     cookiesText: "Для вашай зручнасці мы выкарыстоўваем кукісы.",
     cookiesOk: "Зразумела",
   },
@@ -54,7 +54,7 @@ const welcomeOpen: Record<Locale, WelcomeCopy> = {
     body: "This year our conference turns 5. For the fifth year we gather to study God's Word, connect, ask important questions, and grow in knowing God.",
     chips: ["Borovlyany, Pervomayskaya 23", "30 BYN", "November 7", "10:00"],
     cta: "Register",
-    ticketLogin: "I already have a ticket",
+    ticketLogin: "Log in",
     cookiesText: "For your convenience, we use cookies.",
     cookiesOk: "Got it",
   },
@@ -234,31 +234,31 @@ export const findTicketCopy: Record<
   }
 > = {
   RU: {
-    title: "Войти в билет",
-    hint: "Введите фамилию и телефон из регистрации — откроем ваш QR.",
+    title: "Войти",
+    hint: "Введите фамилию и телефон из регистрации — откроем ваш QR и доступ к Q&A.",
     lastName: "Фамилия",
     phone: "Номер телефона",
-    submit: "Открыть билет",
+    submit: "Войти",
     loading: "Ищем...",
     errRequired: "Укажите фамилию и телефон",
     errGeneric: "Не удалось найти регистрацию",
   },
   BY: {
-    title: "Увайсці ў білет",
-    hint: "Увядзіце прозвішча і тэлефон з рэгістрацыі — адкрыем ваш QR.",
+    title: "Увайсці",
+    hint: "Увядзіце прозвішча і тэлефон з рэгістрацыі — адкрыем ваш QR і доступ да Q&A.",
     lastName: "Прозвішча",
     phone: "Нумар тэлефона",
-    submit: "Адкрыць білет",
+    submit: "Увайсці",
     loading: "Шукаем...",
     errRequired: "Укажыце прозвішча і тэлефон",
     errGeneric: "Не ўдалося знайсці рэгістрацыю",
   },
   EN: {
-    title: "Open my ticket",
-    hint: "Enter the last name and phone from registration to open your QR.",
+    title: "Log in",
+    hint: "Enter the last name and phone from registration to open your QR and Q&A.",
     lastName: "Last name",
     phone: "Phone number",
-    submit: "Open ticket",
+    submit: "Log in",
     loading: "Looking up...",
     errRequired: "Enter last name and phone",
     errGeneric: "Could not find your registration",
@@ -274,6 +274,7 @@ export const ticketCopy: Record<
     thanks: string;
     body: string;
     invite: string;
+    askQuestion: string;
     inviteShare: string;
     linkCopied: string;
     cantCome: string;
@@ -295,6 +296,7 @@ export const ticketCopy: Record<
     thanks: "Спасибо за регистрацию",
     body: "Этот QR-код — твой пропуск на конференцию. Покажи его на стойке регистрации или назови последние 3 цифры кода.",
     invite: "Пригласить друга",
+    askQuestion: "Задать вопрос",
     inviteShare: "Присоединяйся к Imago Dei Conf 2026!",
     linkCopied: "Ссылка скопирована",
     cantCome: "Не получается прийти?",
@@ -315,6 +317,7 @@ export const ticketCopy: Record<
     thanks: "Дзякуй за рэгістрацыю",
     body: "Гэты QR-код — твой пропуск на канферэнцыю. Пакажы яго на стойцы рэгістрацыі або назві апошнія 3 лічбы кода.",
     invite: "Запрасіць сябра",
+    askQuestion: "Задаць пытанне",
     inviteShare: "Далучайся да Imago Dei Conf 2026!",
     linkCopied: "Спасылка скапіявана",
     cantCome: "Не можаш прыйсці?",
@@ -335,6 +338,7 @@ export const ticketCopy: Record<
     thanks: "Thanks for registering",
     body: "This QR code is your pass to the conference. Show it at the registration desk or say the last 3 digits of the code.",
     invite: "Invite a friend",
+    askQuestion: "Ask a question",
     inviteShare: "Join Imago Dei Conf 2026!",
     linkCopied: "Link copied",
     cantCome: "Can't make it?",
