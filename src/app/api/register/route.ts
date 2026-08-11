@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getRegistrationStatus } from "@/lib/i18n";
 import { createParticipant } from "@/lib/participants";
 import type { RegisterInput } from "@/lib/types";
 
@@ -8,6 +9,13 @@ function isEmail(value: string) {
 
 export async function POST(request: Request) {
   try {
+    if (getRegistrationStatus() !== "open") {
+      return NextResponse.json(
+        { error: "Регистрация закрыта" },
+        { status: 403 },
+      );
+    }
+
     const body = (await request.json()) as Partial<RegisterInput>;
 
     const firstName = body.firstName?.trim() ?? "";

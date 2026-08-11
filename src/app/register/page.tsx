@@ -1,10 +1,11 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
+import { getRegistrationStatus } from "@/lib/i18n";
 
 type Step = 1 | 2;
 
@@ -22,6 +23,23 @@ export default function RegisterPage() {
     consent: false,
     needsLunch: null as boolean | null,
   });
+
+  useEffect(() => {
+    if (getRegistrationStatus() !== "open") {
+      router.replace("/");
+    }
+  }, [router]);
+
+  // Avoid flash: don't render form when closed
+  if (getRegistrationStatus() !== "open") {
+    return (
+      <AppShell>
+        <p className="mt-20 text-center text-[14px] text-[#9da1ab]">
+          Регистрация закрыта
+        </p>
+      </AppShell>
+    );
+  }
 
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));

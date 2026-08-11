@@ -1,30 +1,60 @@
+"use client";
+
+import { useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
+import { CookieBanner } from "@/components/CookieBanner";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import {
+  COOKIES_STORAGE_KEY,
+  getRegistrationStatus,
+  getWelcomeCopy,
+  LOCALE_STORAGE_KEY,
+  SOCIAL_LINKS,
+  type Locale,
+} from "@/lib/i18n";
 
-const chips = [
-  "Боровляны, Первомайская 23",
-  "30 BYN",
-  "7 ноября",
-  "10:00",
-];
+function subscribeStorage(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  return () => window.removeEventListener("storage", onStoreChange);
+}
+
+function readLocale(): Locale {
+  const saved = localStorage.getItem(LOCALE_STORAGE_KEY);
+  if (saved === "RU" || saved === "BY" || saved === "EN") return saved;
+  return "RU";
+}
+
+function readCookiesOk(): boolean {
+  return localStorage.getItem(COOKIES_STORAGE_KEY) === "1";
+}
 
 export default function WelcomePage() {
+  const status = getRegistrationStatus();
+  const locale = useSyncExternalStore(subscribeStorage, readLocale, () => "RU" as Locale);
+  const cookiesOk = useSyncExternalStore(subscribeStorage, readCookiesOk, () => true);
+
+  const setLocale = useCallback((next: Locale) => {
+    localStorage.setItem(LOCALE_STORAGE_KEY, next);
+    window.dispatchEvent(new Event("storage"));
+  }, []);
+
+  const acceptCookies = useCallback(() => {
+    localStorage.setItem(COOKIES_STORAGE_KEY, "1");
+    window.dispatchEvent(new Event("storage"));
+  }, []);
+
+  const copy = getWelcomeCopy(locale, status);
+  const showCookies = !cookiesOk;
+
   return (
-    <AppShell
-      headerRight={
-        <button
-          type="button"
-          className="flex items-center gap-1 pl-[5px] text-[14px] font-medium leading-5 text-[#eee]"
-          aria-label="Язык"
-        >
-          RU
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/chevron-down.svg" alt="" className="size-5" />
-        </button>
-      }
-    >
-      <div className="relative flex flex-1 flex-col items-center justify-between">
+    <AppShell headerRight={<LanguageSwitcher value={locale} onChange={setLocale} />}>
+      <div
+        className={`relative flex flex-1 flex-col items-center ${
+          status === "open" ? "justify-between" : "justify-center"
+        }`}
+      >
         <div className="pointer-events-none absolute left-1/2 top-1/2 h-[282px] w-[305px] -translate-x-1/2 -translate-y-[52%]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -41,36 +71,68 @@ export default function WelcomePage() {
             alt=""
             className="pointer-events-none absolute inset-0 h-full w-full"
           />
-          <div className="relative z-10 flex flex-col items-center gap-12 px-5 py-6">
+          <div
+            className={`relative z-10 flex flex-col items-center px-5 py-6 ${
+              status === "ended" ? "gap-0" : "gap-12"
+            }`}
+          >
             <div className="flex w-full flex-col items-center gap-6 text-center text-[#eee]">
               <h1 className="text-[18px] font-medium uppercase leading-6">
-                Добро пожаловать на
+                {copy.titleLine1}
                 <br />
-                IMAGO DEI CONF 2026!
+                {copy.titleLine2}
               </h1>
-              <p className="text-[14px] font-light leading-5">
-                В этом году нашей конференции исполняется 5 лет. Уже пятый год
-                мы собираемся вместе, чтобы изучать Божье Слово, общаться,
-                задавать важные вопросы и возрастать в познании Бога.
+              <p className="whitespace-pre-line text-[14px] font-light leading-5">
+                {copy.body}
               </p>
             </div>
 
-            <div className="flex flex-wrap content-start items-start justify-center gap-2">
-              {chips.map((chip) => (
-                <span
-                  key={chip}
-                  className="rounded-[20px] border border-[#eee] px-4 py-2 text-[12px] font-medium leading-4 text-[#eee]"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
+            {copy.chips.length > 0 ? (
+              <div className="flex flex-wrap content-start items-start justify-center gap-2">
+                {copy.chips.map((chip) => (
+                  <span
+                    key={chip}
+                    className="rounded-[20px] border border-[#eee] px-4 py-2 text-[12px] font-medium leading-4 text-[#eee]"
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+
+            {status === "ended" ? (
+              <div className="flex w-full items-start justify-center gap-5 px-5 py-6">
+                {SOCIAL_LINKS.map((social) => (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="relative flex size-10 items-center justify-center rounded-[20px] bg-[#eee]"
+                    aria-label={social.name}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={social.icon} alt="" className="size-6" />
+                  </a>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
 
-        <Link href="/register" className="mt-auto w-full shrink-0">
-          <Button arrow>Зарегистрироваться</Button>
-        </Link>
+        {status === "open" && copy.cta ? (
+          <Link href="/register" className="mt-auto w-full shrink-0">
+            <Button arrow>{copy.cta}</Button>
+          </Link>
+        ) : null}
+
+        {showCookies ? (
+          <CookieBanner
+            text={copy.cookiesText}
+            okLabel={copy.cookiesOk}
+            onAccept={acceptCookies}
+          />
+        ) : null}
       </div>
     </AppShell>
   );
