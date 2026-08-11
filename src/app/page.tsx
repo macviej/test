@@ -109,9 +109,28 @@ export default function WelcomePage() {
         </div>
 
         {status === "open" && copy.cta ? (
-          <Link href="/register" className="mt-auto w-full shrink-0">
-            <Button arrow>{copy.cta}</Button>
-          </Link>
+          <div className="mt-auto flex w-full shrink-0 flex-col items-center gap-4">
+            <Link href="/register" className="w-full">
+              <Button arrow>{copy.cta}</Button>
+            </Link>
+            {copy.ticketLogin ? (
+              <Link href="/ticket">
+                <Button type="button" variant="ghost">
+                  {copy.ticketLogin}
+                </Button>
+              </Link>
+            ) : null}
+          </div>
+        ) : null}
+
+        {status === "closed" && copy.ticketLogin ? (
+          <div className="mt-auto flex w-full shrink-0 justify-center">
+            <Link href="/ticket">
+              <Button type="button" variant="ghost">
+                {copy.ticketLogin}
+              </Button>
+            </Link>
+          </div>
         ) : null}
 
         {showCookies ? (

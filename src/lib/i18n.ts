@@ -22,6 +22,7 @@ type WelcomeCopy = {
   body: string;
   chips: string[];
   cta: string;
+  ticketLogin: string;
   cookiesText: string;
   cookiesOk: string;
 };
@@ -33,6 +34,7 @@ const welcomeOpen: Record<Locale, WelcomeCopy> = {
     body: "В этом году нашей конференции исполняется 5 лет. Уже пятый год мы собираемся вместе, чтобы изучать Божье Слово, общаться, задавать важные вопросы и возрастать в познании Бога.",
     chips: ["Боровляны, Первомайская 23", "30 BYN", "7 ноября", "10:00"],
     cta: "Зарегистрироваться",
+    ticketLogin: "Уже есть билет",
     cookiesText: "Для вашего удобства мы используем Кукисы.",
     cookiesOk: "Понятно",
   },
@@ -42,6 +44,7 @@ const welcomeOpen: Record<Locale, WelcomeCopy> = {
     body: "У гэтым годзе нашай канферэнцыі спаўняецца 5 гадоў. Ужо пяты год мы збіраемся разам, каб вывучаць Божае Слова, размаўляць, задаваць важныя пытанні і ўзрастаць у пазнанні Бога.",
     chips: ["Бараўляны, Першамайская 23", "30 BYN", "7 лістапада", "10:00"],
     cta: "Зарэгістравацца",
+    ticketLogin: "Ужо ёсць білет",
     cookiesText: "Для вашай зручнасці мы выкарыстоўваем кукісы.",
     cookiesOk: "Зразумела",
   },
@@ -51,6 +54,7 @@ const welcomeOpen: Record<Locale, WelcomeCopy> = {
     body: "This year our conference turns 5. For the fifth year we gather to study God's Word, connect, ask important questions, and grow in knowing God.",
     chips: ["Borovlyany, Pervomayskaya 23", "30 BYN", "November 7", "10:00"],
     cta: "Register",
+    ticketLogin: "I already have a ticket",
     cookiesText: "For your convenience, we use cookies.",
     cookiesOk: "Got it",
   },
@@ -104,7 +108,12 @@ const welcomeEnded: Record<
 export function getWelcomeCopy(locale: Locale, status: RegistrationStatus) {
   const base = welcomeOpen[locale];
   if (status === "closed") {
-    return { ...base, ...welcomeClosed[locale], cta: null as string | null };
+    return {
+      ...base,
+      ...welcomeClosed[locale],
+      cta: null as string | null,
+      ticketLogin: base.ticketLogin,
+    };
   }
   if (status === "ended") {
     return {
@@ -112,9 +121,14 @@ export function getWelcomeCopy(locale: Locale, status: RegistrationStatus) {
       ...welcomeEnded[locale],
       chips: [] as string[],
       cta: null as string | null,
+      ticketLogin: null as string | null,
     };
   }
-  return { ...base, cta: base.cta as string | null };
+  return {
+    ...base,
+    cta: base.cta as string | null,
+    ticketLogin: base.ticketLogin as string | null,
+  };
 }
 
 export const registerCopy: Record<
@@ -203,6 +217,51 @@ export const registerCopy: Record<
     errLunch: "Please choose a lunch option",
     errGeneric: "Registration error",
     errSubmit: "Could not submit the form",
+  },
+};
+
+export const findTicketCopy: Record<
+  Locale,
+  {
+    title: string;
+    hint: string;
+    lastName: string;
+    phone: string;
+    submit: string;
+    loading: string;
+    errRequired: string;
+    errGeneric: string;
+  }
+> = {
+  RU: {
+    title: "Войти в билет",
+    hint: "Введите фамилию и телефон из регистрации — откроем ваш QR.",
+    lastName: "Фамилия",
+    phone: "Номер телефона",
+    submit: "Открыть билет",
+    loading: "Ищем...",
+    errRequired: "Укажите фамилию и телефон",
+    errGeneric: "Не удалось найти регистрацию",
+  },
+  BY: {
+    title: "Увайсці ў білет",
+    hint: "Увядзіце прозвішча і тэлефон з рэгістрацыі — адкрыем ваш QR.",
+    lastName: "Прозвішча",
+    phone: "Нумар тэлефона",
+    submit: "Адкрыць білет",
+    loading: "Шукаем...",
+    errRequired: "Укажыце прозвішча і тэлефон",
+    errGeneric: "Не ўдалося знайсці рэгістрацыю",
+  },
+  EN: {
+    title: "Open my ticket",
+    hint: "Enter the last name and phone from registration to open your QR.",
+    lastName: "Last name",
+    phone: "Phone number",
+    submit: "Open ticket",
+    loading: "Looking up...",
+    errRequired: "Enter last name and phone",
+    errGeneric: "Could not find your registration",
   },
 };
 

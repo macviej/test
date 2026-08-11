@@ -45,6 +45,24 @@ export async function createParticipant(
   return mapParticipant(row);
 }
 
+export function normalizePhone(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("80") && digits.length >= 11) {
+    return `375${digits.slice(2)}`;
+  }
+  if (
+    digits.length === 9 &&
+    (digits.startsWith("29") ||
+      digits.startsWith("25") ||
+      digits.startsWith("33") ||
+      digits.startsWith("44"))
+  ) {
+    return `375${digits}`;
+  }
+  return digits;
+}
+
 export async function getParticipantByCode(
   code: string,
 ): Promise<Participant | null> {
@@ -53,6 +71,28 @@ export async function getParticipantByCode(
     where: { code: normalized },
   });
   return row ? mapParticipant(row) : null;
+}
+
+export async function findParticipantByPhoneAndLastName(
+  phone: string,
+  lastName: string,
+): Promise<Participant | null> {
+  const phoneDigits = normalizePhone(phone);
+  const last = lastName.trim();
+  if (!phoneDigits || !last) return null;
+
+  const rows = await prisma.participant.findMany({
+    where: {
+      lastName: { equals: last, mode: "insensitive" },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const match = rows.find(
+    (row) => normalizePhone(row.phone) === phoneDigits,
+  );
+
+  return match ? mapParticipant(match) : null;
 }
 
 export async function listParticipants(): Promise<Participant[]> {
