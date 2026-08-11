@@ -24,11 +24,16 @@ npm run dev
 - Q&A: http://localhost:3002/qa
 - Админка: http://localhost:3002/admin/login (`admin` / `admin`)
 
+## Прод (Vercel)
+
+Сейчас: https://workspace-five-delta-57.vercel.app
+
+Красивый бесплатный URL: переименовать проект в Vercel в **`imagodeiconf`**  
+→ https://imagodeiconf.vercel.app  
+
+Settings → General → Project Name → `imagodeiconf` → Save  
+(https://vercel.com/eloqwnt1/workspace/settings)
+
 ## База данных
 
 Postgres (Prisma). Нужен `DATABASE_URL` в `.env.local`.
-
-## Дальше
-
-- Полировка UI 1:1 с Figma
-- Кастомный домен
