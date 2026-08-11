@@ -313,11 +313,19 @@ export const notFoundCopy: Record<
 };
 
 export const SOCIAL_LINKS = [
-  { name: "Telegram", href: "https://t.me/", icon: "/assets/social-telegram.svg" },
+  {
+    name: "Telegram",
+    href: "https://t.me/imagodeiconf",
+    icon: "/assets/social-telegram.svg",
+  },
   {
     name: "Instagram",
-    href: "https://instagram.com/",
+    href: "https://www.instagram.com/trinityminsk/",
     icon: "/assets/social-instagram.svg",
   },
-  { name: "YouTube", href: "https://youtube.com/", icon: "/assets/social-youtube.svg" },
+  {
+    name: "YouTube",
+    href: "https://www.youtube.com/@trinity-church-minsk",
+    icon: "/assets/social-youtube.svg",
+  },
 ] as const;
