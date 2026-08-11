@@ -5,12 +5,16 @@ import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
-import { getRegistrationStatus } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { getRegistrationStatus, registerCopy } from "@/lib/i18n";
+import { useLocale } from "@/lib/use-locale";
 
 type Step = 1 | 2;
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { locale, setLocale } = useLocale();
+  const t = registerCopy[locale];
   const [step, setStep] = useState<Step>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,13 +34,10 @@ export default function RegisterPage() {
     }
   }, [router]);
 
-  // Avoid flash: don't render form when closed
   if (getRegistrationStatus() !== "open") {
     return (
       <AppShell>
-        <p className="mt-20 text-center text-[14px] text-[#9da1ab]">
-          Регистрация закрыта
-        </p>
+        <p className="mt-20 text-center text-[14px] text-[#9da1ab]">{t.closed}</p>
       </AppShell>
     );
   }
@@ -55,11 +56,11 @@ export default function RegisterPage() {
       !form.phone.trim() ||
       !form.email.trim()
     ) {
-      setError("Заполните все обязательные поля");
+      setError(t.errRequired);
       return;
     }
     if (!form.consent) {
-      setError("Нужно согласие на обработку данных");
+      setError(t.errConsent);
       return;
     }
     setStep(2);
@@ -68,7 +69,7 @@ export default function RegisterPage() {
   async function submit() {
     setError("");
     if (form.needsLunch === null) {
-      setError("Выберите вариант с обедом");
+      setError(t.errLunch);
       return;
     }
 
@@ -81,7 +82,7 @@ export default function RegisterPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || "Ошибка регистрации");
+        setError(data.error || t.errGeneric);
         return;
       }
 
@@ -94,7 +95,7 @@ export default function RegisterPage() {
       );
       router.push(`/ticket/${data.participant.code}`);
     } catch {
-      setError("Не удалось отправить форму");
+      setError(t.errSubmit);
     } finally {
       setLoading(false);
     }
@@ -105,6 +106,7 @@ export default function RegisterPage() {
       showBack
       backHref={step === 1 ? "/" : "/register"}
       onBack={step === 2 ? () => setStep(1) : undefined}
+      headerRight={<LanguageSwitcher value={locale} onChange={setLocale} />}
     >
       {step === 1 ? (
         <form
@@ -113,28 +115,28 @@ export default function RegisterPage() {
         >
           <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto">
             <h1 className="text-[18px] font-medium leading-6 text-[#eee]">
-              Общая информация
+              {t.title}
             </h1>
 
             <div className="flex flex-col gap-6 pb-4">
               <Field
-                label="Имя"
-                placeholder="Имя"
+                label={t.firstName}
+                placeholder={t.firstName}
                 value={form.firstName}
                 onChange={(e) => update("firstName", e.target.value)}
                 required
                 autoComplete="given-name"
               />
               <Field
-                label="Фамилия"
-                placeholder="Фамилия"
+                label={t.lastName}
+                placeholder={t.lastName}
                 value={form.lastName}
                 onChange={(e) => update("lastName", e.target.value)}
                 required
                 autoComplete="family-name"
               />
               <Field
-                label="Номер телефона"
+                label={t.phone}
                 placeholder="+375"
                 value={form.phone}
                 onChange={(e) => update("phone", e.target.value)}
@@ -143,16 +145,16 @@ export default function RegisterPage() {
                 autoComplete="tel"
               />
               <Field
-                label="Никнейм в Телеграм"
+                label={t.telegram}
                 placeholder="@"
                 value={form.telegram}
                 onChange={(e) => update("telegram", e.target.value)}
                 autoComplete="username"
               />
               <Field
-                label="E-mail"
+                label={t.email}
                 type="email"
-                placeholder="E-mail"
+                placeholder={t.email}
                 value={form.email}
                 onChange={(e) => update("email", e.target.value)}
                 required
@@ -165,14 +167,14 @@ export default function RegisterPage() {
                   onClick={() => update("consent", !form.consent)}
                   className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-[#eee] p-1"
                   aria-pressed={form.consent}
-                  aria-label="Согласие на обработку данных"
+                  aria-label={t.consent}
                 >
                   {form.consent ? (
                     <span className="block size-full rounded-[4px] bg-[#eee]" />
                   ) : null}
                 </button>
                 <span className="text-[12px] font-medium leading-5 text-[#9da1ab]">
-                  Я согласен с обработкой данных
+                  {t.consent}
                 </span>
               </label>
             </div>
@@ -181,19 +183,19 @@ export default function RegisterPage() {
           {error ? <p className="text-[13px] text-[#d15a32]">{error}</p> : null}
 
           <div className="absolute inset-x-0 bottom-0">
-            <Button type="submit">Далее</Button>
+            <Button type="submit">{t.next}</Button>
           </div>
         </form>
       ) : (
         <div className="relative flex min-h-0 flex-1 flex-col gap-6 pb-[68px]">
           <div className="flex flex-1 flex-col gap-6">
             <h1 className="text-[18px] font-medium leading-6 text-[#eee]">
-              Обед
+              {t.lunchTitle}
             </h1>
 
             <div className="flex flex-col gap-3">
               <p className="text-[14px] font-medium leading-5 text-[#eee]">
-                Нужен ли вам обед?
+                {t.lunchQuestion}
               </p>
               <div className="flex gap-4">
                 <Button
@@ -201,7 +203,7 @@ export default function RegisterPage() {
                   variant={form.needsLunch === true ? "choiceActive" : "choice"}
                   onClick={() => update("needsLunch", true)}
                 >
-                  Да
+                  {t.yes}
                 </Button>
                 <Button
                   type="button"
@@ -210,7 +212,7 @@ export default function RegisterPage() {
                   }
                   onClick={() => update("needsLunch", false)}
                 >
-                  Нет
+                  {t.no}
                 </Button>
               </div>
             </div>
@@ -221,7 +223,7 @@ export default function RegisterPage() {
           {form.needsLunch !== null ? (
             <div className="absolute inset-x-0 bottom-0">
               <Button type="button" onClick={submit} disabled={loading}>
-                {loading ? "Сохраняем..." : "Далее"}
+                {loading ? t.saving : t.next}
               </Button>
             </div>
           ) : null}

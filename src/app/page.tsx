@@ -10,20 +10,13 @@ import {
   COOKIES_STORAGE_KEY,
   getRegistrationStatus,
   getWelcomeCopy,
-  LOCALE_STORAGE_KEY,
   SOCIAL_LINKS,
-  type Locale,
 } from "@/lib/i18n";
+import { useLocale } from "@/lib/use-locale";
 
 function subscribeStorage(onStoreChange: () => void) {
   window.addEventListener("storage", onStoreChange);
   return () => window.removeEventListener("storage", onStoreChange);
-}
-
-function readLocale(): Locale {
-  const saved = localStorage.getItem(LOCALE_STORAGE_KEY);
-  if (saved === "RU" || saved === "BY" || saved === "EN") return saved;
-  return "RU";
 }
 
 function readCookiesOk(): boolean {
@@ -32,13 +25,8 @@ function readCookiesOk(): boolean {
 
 export default function WelcomePage() {
   const status = getRegistrationStatus();
-  const locale = useSyncExternalStore(subscribeStorage, readLocale, () => "RU" as Locale);
+  const { locale, setLocale } = useLocale();
   const cookiesOk = useSyncExternalStore(subscribeStorage, readCookiesOk, () => true);
-
-  const setLocale = useCallback((next: Locale) => {
-    localStorage.setItem(LOCALE_STORAGE_KEY, next);
-    window.dispatchEvent(new Event("storage"));
-  }, []);
 
   const acceptCookies = useCallback(() => {
     localStorage.setItem(COOKIES_STORAGE_KEY, "1");
