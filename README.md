@@ -26,13 +26,7 @@ npm run dev
 
 ## Прод (Vercel)
 
-Сейчас: https://workspace-five-delta-57.vercel.app
-
-Красивый бесплатный URL: переименовать проект в Vercel в **`imagodeiconf`**  
-→ https://imagodeiconf.vercel.app  
-
-Settings → General → Project Name → `imagodeiconf` → Save  
-(https://vercel.com/eloqwnt1/workspace/settings)
+https://imagodeiconf.vercel.app
 
 ## База данных
 
