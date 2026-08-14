@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import type { Locale } from "@/lib/i18n";
 
 const OPTIONS: Locale[] = ["RU", "EN", "BY"];
+
+function subscribe() {
+  return () => undefined;
+}
 
 type Props = {
   value: Locale;
@@ -12,15 +17,31 @@ type Props = {
 
 export function LanguageSwitcher({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
+  const [pos, setPos] = useState({ top: 0, right: 0 });
   const rootRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!open || !rootRef.current) return;
+    const rect = rootRef.current.getBoundingClientRect();
+    setPos({
+      top: rect.bottom + 4,
+      right: window.innerWidth - rect.right,
+    });
+  }, [open]);
 
   useEffect(() => {
+    if (!open) return;
     function onDocClick(event: MouseEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (menuRef.current?.contains(target)) return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
-  }, []);
+  }, [open]);
 
   function select(next: Locale) {
     onChange(next);
@@ -29,8 +50,31 @@ export function LanguageSwitcher({ value, onChange }: Props) {
 
   const others = OPTIONS.filter((item) => item !== value);
 
+  const menu =
+    open && mounted
+      ? createPortal(
+          <div
+            ref={menuRef}
+            className="fixed z-[200] flex w-[53px] animate-dropdown-in flex-col items-start gap-1 px-[5px] text-[14px] font-medium leading-5 text-[#eee]"
+            style={{ top: pos.top, right: pos.right }}
+          >
+            {others.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className="w-full text-left"
+                onClick={() => select(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>,
+          document.body,
+        )
+      : null;
+
   return (
-    <div ref={rootRef} className="relative z-40 h-6 w-[53px]">
+    <div ref={rootRef} className="relative h-6 w-[53px]">
       <button
         type="button"
         className="absolute right-0 top-1/2 flex -translate-y-1/2 items-center gap-1 pl-[5px] text-[14px] font-medium leading-5 text-[#eee]"
@@ -43,23 +87,10 @@ export function LanguageSwitcher({ value, onChange }: Props) {
         <img
           src="/assets/chevron-down.svg"
           alt=""
-          className={`size-5 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`size-5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
-      {open ? (
-        <div className="absolute left-0 top-[26px] z-40 flex w-[53px] flex-col items-start gap-1 px-[5px] text-[14px] font-medium leading-5 text-[#eee]">
-          {others.map((item) => (
-            <button
-              key={item}
-              type="button"
-              className="w-full text-left"
-              onClick={() => select(item)}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-      ) : null}
+      {menu}
     </div>
   );
 }

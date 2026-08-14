@@ -60,21 +60,23 @@ export function AppShell({
       </div>
 
       <div className="relative z-10 mx-auto flex h-full w-full max-w-[402px] flex-col px-5 pb-8 pt-5">
-        <header className="relative z-30 mb-8 flex h-10 shrink-0 items-center justify-center">
+        <header className="relative z-[100] mb-8 flex h-10 shrink-0 items-center justify-center overflow-visible">
           {showBack || headerLeft ? (
-            <div className="absolute left-0 top-1/2 z-30 flex -translate-y-1/2 items-center gap-2">
+            <div className="absolute left-0 top-1/2 z-[100] flex -translate-y-1/2 items-center gap-2">
               {showBack ? backControl : null}
               {headerLeft}
             </div>
           ) : null}
           <Logo />
           {headerRight ? (
-            <div className="absolute right-0 top-1/2 z-30 -translate-y-1/2">
+            <div className="absolute right-0 top-1/2 z-[100] -translate-y-1/2">
               {headerRight}
             </div>
           ) : null}
         </header>
-        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+        <div className="relative z-0 flex min-h-0 flex-1 flex-col animate-stage-in">
+          {children}
+        </div>
       </div>
     </div>
   );

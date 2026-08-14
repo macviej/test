@@ -52,7 +52,7 @@ export default function WelcomePage() {
           />
         </div>
 
-        <div className="relative w-full max-w-[362px] shrink-0">
+        <div className="relative w-full max-w-[362px] shrink-0 animate-stage-in stagger-in">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/ticket-bg.svg"
@@ -60,7 +60,7 @@ export default function WelcomePage() {
             className="pointer-events-none absolute inset-0 h-full w-full"
           />
           <div
-            className={`relative z-10 flex flex-col items-center px-5 py-6 ${
+            className={`relative flex flex-col items-center px-5 py-6 ${
               status === "ended" ? "gap-0" : "gap-12"
             }`}
           >
@@ -93,7 +93,7 @@ export default function WelcomePage() {
         </div>
 
         {status === "open" && copy.cta ? (
-          <div className="mt-auto flex w-full shrink-0 flex-col gap-3">
+          <div className="mt-auto flex w-full shrink-0 flex-col gap-3 animate-stage-in [animation-delay:180ms]">
             <Link href="/register" className="w-full">
               <Button arrow>{copy.cta}</Button>
             </Link>
@@ -108,7 +108,7 @@ export default function WelcomePage() {
         ) : null}
 
         {status === "closed" && copy.ticketLogin ? (
-          <div className="mt-auto w-full shrink-0">
+          <div className="mt-auto w-full shrink-0 animate-stage-in [animation-delay:180ms]">
             <Link href="/ticket" className="w-full">
               <Button type="button" variant="outline" className="w-full">
                 {copy.ticketLogin}
