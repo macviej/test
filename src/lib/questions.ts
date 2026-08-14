@@ -32,6 +32,7 @@ export function publicQuestion(q: Question, viewerKey?: string) {
 export async function listQuestions(options?: {
   includeHidden?: boolean;
   unansweredOnly?: boolean;
+  popularFirst?: boolean;
 }) {
   const rows = await prisma.question.findMany({
     where: {
@@ -40,7 +41,13 @@ export async function listQuestions(options?: {
     },
     orderBy: { createdAt: "desc" },
   });
-  return rows.map(mapQuestion);
+  const mapped = rows.map(mapQuestion);
+  if (!options?.popularFirst) return mapped;
+  return [...mapped].sort(
+    (a, b) =>
+      b.likes.length - a.likes.length ||
+      +new Date(b.createdAt) - +new Date(a.createdAt),
+  );
 }
 
 export async function createQuestion(input: {
@@ -80,6 +87,47 @@ export async function toggleLike(id: string, viewerKey: string) {
   return mapQuestion(row);
 }
 
+export type ProjectorMode = "idle" | "list" | "focus";
+
+export async function getProjectorState() {
+  return prisma.projectorState.upsert({
+    where: { id: "default" },
+    create: { id: "default", mode: "list", questionId: null },
+    update: {},
+  });
+}
+
+export async function setProjectorState(
+  mode: ProjectorMode,
+  questionId?: string | null,
+) {
+  const nextId = mode === "focus" ? (questionId ?? null) : null;
+  return prisma.projectorState.upsert({
+    where: { id: "default" },
+    create: {
+      id: "default",
+      mode,
+      questionId: nextId,
+    },
+    update: {
+      mode,
+      questionId: nextId,
+    },
+  });
+}
+
+async function clearProjectorIfShowing(questionId: string) {
+  const state = await prisma.projectorState.findUnique({
+    where: { id: "default" },
+  });
+  if (state?.questionId === questionId) {
+    await prisma.projectorState.update({
+      where: { id: "default" },
+      data: { mode: "list", questionId: null },
+    });
+  }
+}
+
 export async function updateQuestionStatus(id: string, status: QuestionStatus) {
   const current = await prisma.question.findUnique({ where: { id } });
   if (!current) return null;
@@ -91,6 +139,11 @@ export async function updateQuestionStatus(id: string, status: QuestionStatus) {
       answeredAt: status === "answered" ? new Date() : current.answeredAt,
     },
   });
+
+  if (status === "answered" || status === "hidden") {
+    await clearProjectorIfShowing(id);
+  }
+
   return mapQuestion(row);
 }
 
@@ -109,5 +162,6 @@ export async function deleteQuestion(
     where: { id },
     data: { status: "hidden" },
   });
+  await clearProjectorIfShowing(id);
   return mapQuestion(row);
 }

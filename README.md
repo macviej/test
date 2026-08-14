@@ -10,7 +10,7 @@ Next.js + TypeScript + Tailwind · деплой на Vercel
 
 1. Welcome + регистрация + QR
 2. Админка: логин, список, сканер check-in
-3. Q&A: вопросы, лайки, модерация
+3. Q&A: вопросы, лайки, модерация, экран проектора (`/qa/screen`)
 
 ## Запуск
 
@@ -22,6 +22,7 @@ npm run dev
 Открыть http://localhost:3002
 
 - Q&A: http://localhost:3002/qa
+- Проектор: http://localhost:3002/qa/screen
 - Админка: http://localhost:3002/admin/login (логин/пароль из `.env.local`)
 
 ## Прод (Vercel)

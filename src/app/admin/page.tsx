@@ -60,6 +60,16 @@ export default function AdminHomePage() {
               Q&A
             </Button>
           </Link>
+          <a
+            href="/qa/screen"
+            target="_blank"
+            rel="noreferrer"
+            className="w-full"
+          >
+            <Button type="button" variant="outline" className="w-full">
+              Проектор
+            </Button>
+          </a>
         </div>
       </div>
     </AppShell>

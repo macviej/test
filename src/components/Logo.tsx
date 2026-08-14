@@ -1,11 +1,12 @@
 import Link from "next/link";
 
 type LogoProps = {
-  href?: string;
+  href?: string | null;
   className?: string;
+  size?: "sm" | "lg";
 };
 
-export function Logo({ href = "/", className = "" }: LogoProps) {
+export function Logo({ href = "/", className = "", size = "sm" }: LogoProps) {
   const content = (
     <div className={`flex w-[132px] flex-col items-end gap-[4.8px] ${className}`}>
       <div className="relative h-[26px] w-full">
@@ -31,6 +32,15 @@ export function Logo({ href = "/", className = "" }: LogoProps) {
     </div>
   );
 
-  if (!href) return content;
-  return <Link href={href}>{content}</Link>;
+  const scaled =
+    size === "lg" ? (
+      <div className="h-[80px] w-[264px]">
+        <div className="origin-top-left scale-[2]">{content}</div>
+      </div>
+    ) : (
+      content
+    );
+
+  if (!href) return scaled;
+  return <Link href={href}>{scaled}</Link>;
 }
