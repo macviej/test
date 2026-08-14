@@ -6,11 +6,11 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
 import { CookieBanner } from "@/components/CookieBanner";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { SocialLinks } from "@/components/SocialLinks";
 import {
   COOKIES_STORAGE_KEY,
   getRegistrationStatus,
   getWelcomeCopy,
-  SOCIAL_LINKS,
 } from "@/lib/i18n";
 import { useLocale } from "@/lib/use-locale";
 
@@ -88,23 +88,7 @@ export default function WelcomePage() {
               </div>
             ) : null}
 
-            {status === "ended" ? (
-              <div className="flex w-full items-start justify-center gap-5 px-5 py-6">
-                {SOCIAL_LINKS.map((social) => (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="relative flex size-10 items-center justify-center rounded-[20px] bg-[#eee]"
-                    aria-label={social.name}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={social.icon} alt="" className="size-6" />
-                  </a>
-                ))}
-              </div>
-            ) : null}
+            {status === "ended" ? <SocialLinks className="px-5 py-6" /> : null}
           </div>
         </div>
 

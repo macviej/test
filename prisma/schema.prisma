@@ -16,6 +16,9 @@ model Participant {
   telegram    String    @default("")
   email       String
   needsLunch  Boolean?
+  lunchType   String?
+  hasAllergy  Boolean?
+  allergyNote String    @default("")
   checkedIn   Boolean   @default(false)
   checkedInAt DateTime?
   createdAt   DateTime  @default(now())

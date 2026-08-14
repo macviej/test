@@ -31,6 +31,8 @@ https://imagodeiconf.vercel.app
 Админка: https://imagodeiconf.vercel.app/admin/login  
 Креды задаются в Vercel → Environment Variables: `ADMIN_LOGIN`, `ADMIN_PASSWORD`, `ADMIN_SECRET` (в проде дефолта `admin`/`admin` больше нет).
 
+На билете по умолчанию показываются «Пригласить друга» и «Отменить регистрацию». За неделю до конференции поставьте `NEXT_PUBLIC_TICKET_CTA=qa` — вместо них будет «Задать вопрос».
+
 ## База данных
 
 Postgres (Prisma). Нужен `DATABASE_URL` в `.env.local`.

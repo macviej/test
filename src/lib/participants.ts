@@ -1,6 +1,12 @@
 import type { Participant as DbParticipant } from "@prisma/client";
 import { prisma } from "./db";
-import type { Participant, RegisterInput } from "./types";
+import type { LunchType, Participant, RegisterInput } from "./types";
+import { extractParticipantCode } from "./ticket-code";
+
+function parseLunchType(value: string | null): LunchType | null {
+  if (value === "standard" || value === "vegan") return value;
+  return null;
+}
 
 function mapParticipant(row: DbParticipant): Participant {
   return {
@@ -12,6 +18,9 @@ function mapParticipant(row: DbParticipant): Participant {
     telegram: row.telegram,
     email: row.email,
     needsLunch: row.needsLunch,
+    lunchType: parseLunchType(row.lunchType),
+    hasAllergy: row.hasAllergy,
+    allergyNote: row.allergyNote,
     checkedIn: row.checkedIn,
     checkedInAt: row.checkedInAt ? row.checkedInAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
@@ -40,6 +49,12 @@ export async function createParticipant(
       telegram: input.telegram.trim().replace(/^@/, ""),
       email: input.email.trim().toLowerCase(),
       needsLunch: input.needsLunch,
+      lunchType: input.needsLunch ? input.lunchType : null,
+      hasAllergy: input.needsLunch ? input.hasAllergy : null,
+      allergyNote:
+        input.needsLunch && input.hasAllergy
+          ? input.allergyNote.trim()
+          : "",
     },
   });
   return mapParticipant(row);
@@ -66,7 +81,9 @@ export function normalizePhone(phone: string) {
 export async function getParticipantByCode(
   code: string,
 ): Promise<Participant | null> {
-  const normalized = code.trim().toUpperCase().replace(/^#/, "");
+  const normalized =
+    extractParticipantCode(code) ||
+    code.trim().toUpperCase().replace(/^#/, "");
   const row = await prisma.participant.findUnique({
     where: { code: normalized },
   });
@@ -105,7 +122,9 @@ export async function listParticipants(): Promise<Participant[]> {
 export async function checkInParticipant(
   code: string,
 ): Promise<{ participant: Participant; alreadyCheckedIn: boolean } | null> {
-  const normalized = code.trim().toUpperCase().replace(/^#/, "");
+  const normalized =
+    extractParticipantCode(code) ||
+    code.trim().toUpperCase().replace(/^#/, "");
   const current = await prisma.participant.findUnique({
     where: { code: normalized },
   });

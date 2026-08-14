@@ -8,6 +8,14 @@ export function getRegistrationStatus(): RegistrationStatus {
   return "open";
 }
 
+export type TicketCtaMode = "invite" | "qa";
+
+export function getTicketCtaMode(): TicketCtaMode {
+  const raw = (process.env.NEXT_PUBLIC_TICKET_CTA || "invite").toLowerCase();
+  if (raw === "qa") return "qa";
+  return "invite";
+}
+
 export const LOCALE_STORAGE_KEY = "imago-locale";
 export const COOKIES_STORAGE_KEY = "imago-cookies-ok";
 
@@ -145,12 +153,24 @@ export const registerCopy: Record<
     next: string;
     lunchTitle: string;
     lunchQuestion: string;
+    lunchKind: string;
+    lunchStandard: string;
+    lunchVegan: string;
+    lunchAllergy: string;
+    lunchAllergyDetails: string;
+    extraTitle: string;
+    extraBody: string;
+    reviewTitle: string;
+    confirm: string;
     yes: string;
     no: string;
     saving: string;
     errRequired: string;
     errConsent: string;
     errLunch: string;
+    errLunchKind: string;
+    errAllergy: string;
+    errAllergyDetails: string;
     errGeneric: string;
     errSubmit: string;
   }
@@ -167,12 +187,25 @@ export const registerCopy: Record<
     next: "Далее",
     lunchTitle: "Обед",
     lunchQuestion: "Нужен ли вам обед?",
+    lunchKind: "Какой обед?",
+    lunchStandard: "Стандарт",
+    lunchVegan: "Веган",
+    lunchAllergy: "Есть ли аллергия?",
+    lunchAllergyDetails: "На какие",
+    extraTitle: "Дополнительная информация",
+    extraBody:
+      "Конференция пройдёт 7 ноября в 10:00 по адресу Боровляны, Первомайская 23.\n\nУчастие — 30 BYN, оплата на стойке регистрации. Сохраните QR-код — это ваш пропуск.",
+    reviewTitle: "Проверка данных",
+    confirm: "Зарегистрироваться",
     yes: "Да",
     no: "Нет",
     saving: "Сохраняем...",
     errRequired: "Заполните все обязательные поля",
     errConsent: "Нужно согласие на обработку данных",
     errLunch: "Выберите вариант с обедом",
+    errLunchKind: "Выберите тип обеда",
+    errAllergy: "Укажите, есть ли аллергия",
+    errAllergyDetails: "Укажите, на что аллергия",
     errGeneric: "Ошибка регистрации",
     errSubmit: "Не удалось отправить форму",
   },
@@ -188,12 +221,25 @@ export const registerCopy: Record<
     next: "Далей",
     lunchTitle: "Абед",
     lunchQuestion: "Ці патрэбны вам абед?",
+    lunchKind: "Які абед?",
+    lunchStandard: "Стандарт",
+    lunchVegan: "Веган",
+    lunchAllergy: "Ці ёсць алергія?",
+    lunchAllergyDetails: "На што",
+    extraTitle: "Дадатковая інфармацыя",
+    extraBody:
+      "Канферэнцыя пройдзе 7 лістапада а 10:00 па адрасе Бараўляны, Першамайская 23.\n\nУдзел — 30 BYN, аплата на стойцы рэгістрацыі. Захавайце QR-код — гэта ваш пропуск.",
+    reviewTitle: "Праверка даных",
+    confirm: "Зарэгістравацца",
     yes: "Так",
     no: "Не",
     saving: "Захоўваем...",
     errRequired: "Запоўніце ўсе абавязковыя палі",
     errConsent: "Патрэбна згода на апрацоўку даных",
     errLunch: "Выберыце варыянт з абедам",
+    errLunchKind: "Выберыце тып абеду",
+    errAllergy: "Укажыце, ці ёсць алергія",
+    errAllergyDetails: "Укажыце, на што алергія",
     errGeneric: "Памылка рэгістрацыі",
     errSubmit: "Не ўдалося адправіць форму",
   },
@@ -209,12 +255,25 @@ export const registerCopy: Record<
     next: "Next",
     lunchTitle: "Lunch",
     lunchQuestion: "Do you need lunch?",
+    lunchKind: "Which lunch?",
+    lunchStandard: "Standard",
+    lunchVegan: "Vegan",
+    lunchAllergy: "Any allergies?",
+    lunchAllergyDetails: "Which ones",
+    extraTitle: "Additional information",
+    extraBody:
+      "The conference is on November 7 at 10:00 at Borovlyany, Pervomayskaya 23.\n\nAdmission is 30 BYN, paid at the registration desk. Keep your QR code — it is your pass.",
+    reviewTitle: "Review your details",
+    confirm: "Register",
     yes: "Yes",
     no: "No",
     saving: "Saving...",
     errRequired: "Please fill in all required fields",
     errConsent: "Data processing consent is required",
     errLunch: "Please choose a lunch option",
+    errLunchKind: "Please choose a lunch type",
+    errAllergy: "Please say if you have allergies",
+    errAllergyDetails: "Please specify your allergies",
     errGeneric: "Registration error",
     errSubmit: "Could not submit the form",
   },
@@ -286,6 +345,11 @@ export const ticketCopy: Record<
     lunch: string;
     lunchYes: string;
     lunchNo: string;
+    lunchStandard: string;
+    lunchVegan: string;
+    allergy: string;
+    allergyNone: string;
+    followUs: string;
     chips: string[];
   }
 > = {
@@ -308,6 +372,11 @@ export const ticketCopy: Record<
     lunch: "Обед",
     lunchYes: "Нужен",
     lunchNo: "Не нужен",
+    lunchStandard: "Стандарт",
+    lunchVegan: "Веган",
+    allergy: "Аллергия",
+    allergyNone: "Нет",
+    followUs: "Мы в соцсетях",
     chips: welcomeOpen.RU.chips,
   },
   BY: {
@@ -329,6 +398,11 @@ export const ticketCopy: Record<
     lunch: "Абед",
     lunchYes: "Патрэбны",
     lunchNo: "Не патрэбны",
+    lunchStandard: "Стандарт",
+    lunchVegan: "Веган",
+    allergy: "Алергія",
+    allergyNone: "Не",
+    followUs: "Мы ў сацсетках",
     chips: welcomeOpen.BY.chips,
   },
   EN: {
@@ -350,6 +424,11 @@ export const ticketCopy: Record<
     lunch: "Lunch",
     lunchYes: "Needed",
     lunchNo: "Not needed",
+    lunchStandard: "Standard",
+    lunchVegan: "Vegan",
+    allergy: "Allergies",
+    allergyNone: "None",
+    followUs: "Follow us",
     chips: welcomeOpen.EN.chips,
   },
 };

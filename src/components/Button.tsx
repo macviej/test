@@ -28,7 +28,7 @@ export function Button({
     outline:
       "h-[52px] w-full gap-2 rounded-[20px] border border-[#eee] bg-transparent py-5 pl-4 pr-[9px] text-[16px] font-semibold uppercase leading-5 text-[#eee]",
     ghost:
-      "h-auto w-auto gap-0 border-0 bg-transparent p-0 text-[14px] font-medium leading-5 text-[#eee]",
+      "h-auto w-auto gap-0 border-0 bg-transparent p-0 text-[14px] font-semibold leading-5 text-[#eee]",
     choice:
       "h-auto flex-1 gap-1 rounded-[20px] border border-[#eee] bg-transparent py-4 pl-8 pr-7 text-[14px] font-semibold leading-[18px] text-[#eee]",
     choiceActive:

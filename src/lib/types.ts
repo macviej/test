@@ -1,3 +1,5 @@
+export type LunchType = "standard" | "vegan";
+
 export type Participant = {
   id: string;
   code: string;
@@ -7,6 +9,9 @@ export type Participant = {
   telegram: string;
   email: string;
   needsLunch: boolean | null;
+  lunchType: LunchType | null;
+  hasAllergy: boolean | null;
+  allergyNote: string;
   checkedIn: boolean;
   checkedInAt: string | null;
   createdAt: string;
@@ -19,6 +24,9 @@ export type RegisterInput = {
   telegram: string;
   email: string;
   needsLunch: boolean | null;
+  lunchType: LunchType | null;
+  hasAllergy: boolean | null;
+  allergyNote: string;
   consent: boolean;
 };
 

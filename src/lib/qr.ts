@@ -6,8 +6,8 @@ export async function buildQrDataUrl(value: string) {
     margin: 1,
     width: 480,
     color: {
-      dark: "#EEEEEE",
-      light: "#000000",
+      dark: "#000000",
+      light: "#FFFFFF",
     },
   });
 }

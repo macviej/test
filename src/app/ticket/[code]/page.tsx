@@ -6,8 +6,11 @@ import { useParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ticketCopy } from "@/lib/i18n";
+import { Overlay } from "@/components/Overlay";
+import { SocialLinks } from "@/components/SocialLinks";
+import { getTicketCtaMode, ticketCopy } from "@/lib/i18n";
 import { useLocale } from "@/lib/use-locale";
+import type { LunchType } from "@/lib/types";
 
 type TicketPayload = {
   participant: {
@@ -18,6 +21,9 @@ type TicketPayload = {
     telegram: string;
     email: string;
     needsLunch: boolean | null;
+    lunchType: LunchType | null;
+    hasAllergy: boolean | null;
+    allergyNote: string;
   };
   qrDataUrl: string;
 };
@@ -26,6 +32,7 @@ export default function TicketPage() {
   const params = useParams<{ code: string }>();
   const { locale, setLocale } = useLocale();
   const t = ticketCopy[locale];
+  const ctaMode = getTicketCtaMode();
   const [data, setData] = useState<TicketPayload | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -67,25 +74,39 @@ export default function TicketPage() {
 
   const p = data?.participant;
 
+  function lunchSummary() {
+    if (!p || p.needsLunch === null) return "—";
+    if (!p.needsLunch) return t.lunchNo;
+    const kind =
+      p.lunchType === "vegan"
+        ? t.lunchVegan
+        : p.lunchType === "standard"
+          ? t.lunchStandard
+          : t.lunchYes;
+    const allergy =
+      p.hasAllergy === true
+        ? `${t.allergy}: ${p.allergyNote || "—"}`
+        : `${t.allergy}: ${t.allergyNone}`;
+    return `${kind}. ${allergy}`;
+  }
+
   return (
     <AppShell
-      headerRight={
-        <div className="flex items-center gap-3">
-          <LanguageSwitcher value={locale} onChange={setLocale} />
-          <button
-            type="button"
-            className="flex size-[30px] items-center justify-center"
-            aria-label={t.info}
-            onClick={() => setInfoOpen(true)}
-            disabled={!data}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/assets/info.svg" alt="" className="size-[30px]" />
-          </button>
-        </div>
+      headerLeft={
+        <button
+          type="button"
+          className="flex size-[30px] items-center justify-center"
+          aria-label={t.info}
+          onClick={() => setInfoOpen(true)}
+          disabled={!data}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/info.svg" alt="" className="size-[30px]" />
+        </button>
       }
+      headerRight={<LanguageSwitcher value={locale} onChange={setLocale} />}
     >
-      <div className="relative flex flex-1 flex-col">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto">
         {loading ? (
           <p className="mt-20 text-center text-[14px] text-[#9da1ab]">
             {t.loading}
@@ -94,7 +115,7 @@ export default function TicketPage() {
           <p className="mt-20 text-center text-[14px] text-[#d15a32]">{error}</p>
         ) : data && p ? (
           <>
-            <div className="flex min-h-[568px] flex-1 flex-col">
+            <div className="flex min-h-0 flex-1 flex-col">
               <div className="flex flex-col gap-4 text-center">
                 <h1 className="text-[20px] font-semibold uppercase leading-7 text-[#eee]">
                   {t.thanks}
@@ -105,107 +126,105 @@ export default function TicketPage() {
               </div>
 
               <div className="mx-auto mt-10 flex w-[240px] flex-col items-center gap-4">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={data.qrDataUrl}
-                  alt={`QR ${p.code}`}
-                  className="size-[240px]"
-                />
+                <div className="rounded-[16px] bg-white p-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={data.qrDataUrl}
+                    alt={`QR ${p.code}`}
+                    className="size-[216px]"
+                  />
+                </div>
                 <p className="text-center text-[20px] font-semibold uppercase leading-7 text-[#eee]">
                   #{p.code}
                 </p>
               </div>
 
-              <div className="mt-auto flex flex-col gap-3">
-                <Button type="button" arrow onClick={inviteFriend}>
-                  {t.invite}
-                </Button>
-                <Link href="/qa" className="w-full">
-                  <Button type="button" variant="outline">
-                    {t.askQuestion}
+              {ctaMode === "invite" ? (
+                <div className="mt-auto flex flex-col gap-3 pt-8">
+                  <Button type="button" arrow onClick={inviteFriend}>
+                    {t.invite}
                   </Button>
-                </Link>
-              </div>
+                </div>
+              ) : (
+                <div className="mt-auto flex flex-col gap-3 pt-8">
+                  <Link href="/qa" className="w-full">
+                    <Button type="button" arrow>
+                      {t.askQuestion}
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
 
-            <div className="mt-8 flex flex-col items-center gap-1 text-center">
-              <p className="w-full text-[14px] font-light leading-5 text-[#eee]">
-                {t.cantCome}
-              </p>
-              <Button
-                variant="textArrow"
-                arrow
-                type="button"
-                onClick={() => alert(t.cancelSoon)}
-              >
-                {t.cancel}
-              </Button>
-            </div>
+            {ctaMode === "invite" ? (
+              <div className="mt-8 flex flex-col items-center gap-1 pb-2 text-center">
+                <p className="w-full text-[14px] font-light leading-5 text-[#eee]">
+                  {t.cantCome}
+                </p>
+                <Button
+                  variant="textArrow"
+                  arrow
+                  type="button"
+                  onClick={() => alert(t.cancelSoon)}
+                >
+                  {t.cancel}
+                </Button>
+              </div>
+            ) : null}
           </>
         ) : null}
+      </div>
 
-        {infoOpen && p ? (
-          <div className="absolute inset-0 z-20 flex items-start justify-center pt-2">
-            <button
-              type="button"
-              className="absolute inset-0 bg-black/50"
-              aria-label={t.close}
-              onClick={() => setInfoOpen(false)}
-            />
-            <div className="relative z-10 w-full overflow-hidden rounded-[28px] border border-[#eee]/20 bg-[#0b1020]/95 px-5 py-5 shadow-[0_0_40px_rgba(20,76,205,0.35)] backdrop-blur-md">
-              <div className="mb-5 flex items-start justify-between gap-3">
-                <div className="flex flex-wrap gap-2">
-                  {t.chips.map((chip) => (
-                    <span
-                      key={chip}
-                      className="rounded-[20px] border border-[#eee] px-4 py-2 text-[12px] font-medium leading-4 text-[#eee]"
-                    >
-                      {chip}
-                    </span>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setInfoOpen(false)}
-                  className="flex size-6 shrink-0 items-center justify-center text-[18px] leading-none text-[#eee]"
-                  aria-label={t.close}
+      {infoOpen && p ? (
+        <Overlay onClose={() => setInfoOpen(false)} labelledBy="ticket-info">
+          <div className="w-full overflow-hidden rounded-[28px] border border-[#eee]/20 bg-[#0b1020]/95 px-5 py-5 shadow-[0_0_40px_rgba(20,76,205,0.35)] backdrop-blur-md">
+            <div className="mb-5 flex flex-wrap gap-2">
+              {t.chips.map((chip) => (
+                <span
+                  key={chip}
+                  className="rounded-[20px] border border-[#eee] px-4 py-2 text-[12px] font-medium leading-4 text-[#eee]"
                 >
-                  ×
-                </button>
-              </div>
+                  {chip}
+                </span>
+              ))}
+            </div>
 
-              <div className="flex flex-col gap-4">
-                <h2 className="text-center text-[18px] font-medium uppercase leading-6 text-[#eee]">
-                  {t.yourData}
-                </h2>
-                <div className="flex flex-col gap-2 text-[14px] font-light leading-5 text-[#eee]">
-                  <p>
-                    {p.firstName} {p.lastName}
-                  </p>
-                  <p>{p.phone}</p>
-                  {p.telegram ? <p>@{p.telegram.replace(/^@/, "")}</p> : null}
-                  <p>{p.email}</p>
-                </div>
-                <div className="flex flex-col gap-3">
-                  <p className="text-[16px] font-medium leading-5 text-[#eee]">
-                    {t.lunch}
-                  </p>
-                  <p className="text-[14px] font-light leading-5 text-[#eee]">
-                    {p.needsLunch === null
-                      ? "—"
-                      : p.needsLunch
-                        ? t.lunchYes
-                        : t.lunchNo}
-                  </p>
-                </div>
-                <Button type="button" onClick={() => setInfoOpen(false)}>
-                  {t.close}
-                </Button>
+            <div className="flex flex-col gap-4">
+              <h2
+                id="ticket-info"
+                className="text-center text-[18px] font-medium uppercase leading-6 text-[#eee]"
+              >
+                {t.yourData}
+              </h2>
+              <div className="flex flex-col gap-2 text-[14px] font-light leading-5 text-[#eee]">
+                <p>
+                  {p.firstName} {p.lastName}
+                </p>
+                <p>{p.phone}</p>
+                {p.telegram ? <p>@{p.telegram.replace(/^@/, "")}</p> : null}
+                <p>{p.email}</p>
               </div>
+              <div className="flex flex-col gap-3">
+                <p className="text-[16px] font-medium leading-5 text-[#eee]">
+                  {t.lunch}
+                </p>
+                <p className="text-[14px] font-light leading-5 text-[#eee]">
+                  {lunchSummary()}
+                </p>
+              </div>
+              <div className="flex flex-col items-center gap-3">
+                <p className="text-[14px] font-medium leading-5 text-[#eee]">
+                  {t.followUs}
+                </p>
+                <SocialLinks />
+              </div>
+              <Button type="button" onClick={() => setInfoOpen(false)}>
+                {t.close}
+              </Button>
             </div>
           </div>
-        ) : null}
-      </div>
+        </Overlay>
+      ) : null}
     </AppShell>
   );
 }

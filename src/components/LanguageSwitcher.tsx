@@ -30,7 +30,7 @@ export function LanguageSwitcher({ value, onChange }: Props) {
   const others = OPTIONS.filter((item) => item !== value);
 
   return (
-    <div ref={rootRef} className="relative h-6 w-[53px]">
+    <div ref={rootRef} className="relative z-40 h-6 w-[53px]">
       <button
         type="button"
         className="absolute right-0 top-1/2 flex -translate-y-1/2 items-center gap-1 pl-[5px] text-[14px] font-medium leading-5 text-[#eee]"
@@ -47,7 +47,7 @@ export function LanguageSwitcher({ value, onChange }: Props) {
         />
       </button>
       {open ? (
-        <div className="absolute left-0 top-[26px] flex w-[53px] flex-col items-start gap-1 px-[5px] text-[14px] font-medium leading-5 text-[#eee]">
+        <div className="absolute left-0 top-[26px] z-40 flex w-[53px] flex-col items-start gap-1 px-[5px] text-[14px] font-medium leading-5 text-[#eee]">
           {others.map((item) => (
             <button
               key={item}

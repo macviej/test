@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { checkInParticipant } from "@/lib/participants";
+import { extractParticipantCode } from "@/lib/ticket-code";
 
 export async function POST(request: Request) {
   if (!(await isAdminAuthenticated())) {
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
 
   try {
     const body = (await request.json()) as { code?: string };
-    const code = body.code?.trim() || "";
+    const code = extractParticipantCode(body.code || "") || body.code?.trim() || "";
     if (!code) {
       return NextResponse.json({ error: "Укажите код" }, { status: 400 });
     }

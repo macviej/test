@@ -81,11 +81,17 @@ export default function FindTicketPage() {
           />
           <Field
             label={t.phone}
-            placeholder="+375"
+            prefix="+375"
+            placeholder="291112233"
             type="tel"
             inputMode="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={phone.replace(/^\+375/, "")}
+            onChange={(e) => {
+              let digits = e.target.value.replace(/\D/g, "");
+              if (digits.startsWith("375")) digits = digits.slice(3);
+              if (digits.startsWith("80")) digits = digits.slice(2);
+              setPhone(`+375${digits}`);
+            }}
             autoComplete="tel"
             required
           />
