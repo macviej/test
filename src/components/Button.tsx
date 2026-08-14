@@ -20,7 +20,7 @@ export function Button({
   ...props
 }: Props) {
   const base =
-    "inline-flex items-center justify-center transition disabled:opacity-50";
+    "inline-flex items-center justify-center transition duration-200 ease-out hover:brightness-[0.97] active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100";
 
   const variants = {
     primary:
@@ -30,9 +30,9 @@ export function Button({
     ghost:
       "h-auto w-auto gap-0 border-0 bg-transparent p-0 text-[14px] font-semibold leading-5 text-[#eee]",
     choice:
-      "h-auto flex-1 gap-1 rounded-[20px] border border-[#eee] bg-transparent py-4 pl-8 pr-7 text-[14px] font-semibold leading-[18px] text-[#eee]",
+      "h-auto flex-1 gap-1 rounded-[20px] border border-[#eee] bg-transparent py-4 pl-8 pr-7 text-[14px] font-semibold leading-[18px] text-[#eee] transition-colors duration-200",
     choiceActive:
-      "h-auto flex-1 gap-1 rounded-[20px] border border-[#eee] bg-[#eee] py-4 pl-8 pr-7 text-[14px] font-semibold leading-[18px] text-black",
+      "h-auto flex-1 gap-1 rounded-[20px] border border-[#eee] bg-[#eee] py-4 pl-8 pr-7 text-[14px] font-semibold leading-[18px] text-black transition-colors duration-200",
     textArrow:
       "h-auto w-auto gap-0.5 rounded-[20px] border-0 bg-transparent py-0 pl-1.5 pr-0 text-[14px] font-semibold leading-[18px] text-[#eee]",
   };

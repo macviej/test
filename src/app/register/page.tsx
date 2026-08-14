@@ -6,6 +6,7 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Stage } from "@/components/Stage";
 import { getRegistrationStatus, getWelcomeCopy, registerCopy } from "@/lib/i18n";
 import { useLocale } from "@/lib/use-locale";
 import type { LunchType } from "@/lib/types";
@@ -164,6 +165,7 @@ export default function RegisterPage() {
       onBack={step === 1 ? undefined : goBack}
       headerRight={<LanguageSwitcher value={locale} onChange={setLocale} />}
     >
+      <Stage id={step} className="flex min-h-0 flex-1 flex-col">
       {step === 1 ? (
         <form
           onSubmit={goNext}
@@ -396,6 +398,7 @@ export default function RegisterPage() {
           </div>
         </div>
       ) : null}
+      </Stage>
     </AppShell>
   );
 }

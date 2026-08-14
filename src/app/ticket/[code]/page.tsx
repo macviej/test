@@ -115,7 +115,7 @@ export default function TicketPage() {
           <p className="mt-20 text-center text-[14px] text-[#d15a32]">{error}</p>
         ) : data && p ? (
           <>
-            <div className="flex min-h-0 flex-1 flex-col">
+            <div className="flex min-h-0 flex-1 flex-col animate-stage-in">
               <div className="flex flex-col gap-4 text-center">
                 <h1 className="text-[20px] font-semibold uppercase leading-7 text-[#eee]">
                   {t.thanks}
@@ -126,7 +126,7 @@ export default function TicketPage() {
               </div>
 
               <div className="mx-auto mt-10 flex w-[240px] flex-col items-center gap-4">
-                <div className="rounded-[16px] bg-white p-3">
+                <div className="rounded-[16px] bg-white p-3 animate-dialog-in">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={data.qrDataUrl}

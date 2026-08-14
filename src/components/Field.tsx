@@ -19,7 +19,7 @@ export function Field({
         {label}
       </span>
       {prefix ? (
-        <div className="flex w-full items-center rounded-[20px] border border-[#eee] bg-transparent px-5 py-3 focus-within:border-white">
+        <div className="flex w-full items-center rounded-[20px] border border-[#eee] bg-transparent px-5 py-3 transition-colors duration-200 focus-within:border-white">
           <span className="shrink-0 text-[14px] font-light leading-5 text-[#eee]">
             {prefix}
           </span>
@@ -32,7 +32,7 @@ export function Field({
         </div>
       ) : (
         <input
-          className={`w-full rounded-[20px] border border-[#eee] bg-transparent px-5 py-3 text-[14px] font-light leading-5 text-[#eee] outline-none placeholder:text-[#9da1ab] focus:border-white ${className}`}
+          className={`w-full rounded-[20px] border border-[#eee] bg-transparent px-5 py-3 text-[14px] font-light leading-5 text-[#eee] outline-none placeholder:text-[#9da1ab] transition-colors duration-200 focus:border-white ${className}`}
           value={value}
           onChange={onChange}
           {...props}

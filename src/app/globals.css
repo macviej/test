@@ -47,3 +47,98 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-stage-in {
+  animation: stage-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease both;
+}
+
+.animate-dialog-in {
+  animation: dialog-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-dropdown-in {
+  animation: dropdown-in 0.22s ease both;
+}
+
+.stagger-in > * {
+  animation: stage-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stagger-in > *:nth-child(1) {
+  animation-delay: 0.04s;
+}
+.stagger-in > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.stagger-in > *:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.stagger-in > *:nth-child(4) {
+  animation-delay: 0.22s;
+}
+.stagger-in > *:nth-child(5) {
+  animation-delay: 0.28s;
+}
+.stagger-in > *:nth-child(6) {
+  animation-delay: 0.34s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-stage-in,
+  .animate-fade-in,
+  .animate-dialog-in,
+  .animate-dropdown-in,
+  .stagger-in > * {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
