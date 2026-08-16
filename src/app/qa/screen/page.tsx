@@ -16,6 +16,24 @@ type ScreenPayload = {
   qrDataUrl: string;
 };
 
+function QrBlock({ dataUrl }: { dataUrl?: string }) {
+  return (
+    <div className="flex flex-col items-center gap-6">
+      {dataUrl ? (
+        <div className="rounded-[16px] bg-white p-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={dataUrl} alt="QR для вопросов" className="size-[216px]" />
+        </div>
+      ) : (
+        <div className="size-[240px] rounded-[16px] bg-white/20" />
+      )}
+      <p className="w-[290px] text-center text-[28px] font-medium leading-10 text-[#eee]">
+        Задать вопрос можно здесь
+      </p>
+    </div>
+  );
+}
+
 export default function ProjectorScreenPage() {
   const [data, setData] = useState<ScreenPayload | null>(null);
 
@@ -38,6 +56,9 @@ export default function ProjectorScreenPage() {
     };
   }, [load]);
 
+  const mode = data?.mode ?? "idle";
+  const featured = data?.featured;
+
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-black text-[#eee]">
       <div className="pointer-events-none fixed inset-0">
@@ -57,91 +78,106 @@ export default function ProjectorScreenPage() {
         />
       </div>
 
-      <div className="relative z-10 flex h-full w-full">
-        <div className="relative min-w-0 flex-1 px-[100px] pb-16 pt-[60px]">
-          <div className="pointer-events-none absolute left-1/2 top-[60px] z-20 -translate-x-1/2">
-            <Logo href={null} size="lg" />
+      {mode === "focus" && featured ? (
+        <div
+          key={featured.id}
+          className="relative z-10 flex h-full w-full flex-col"
+        >
+          <div className="pointer-events-none absolute left-1/2 top-8 z-20 -translate-x-1/2 qa-screen-fade">
+            <Logo href={null} size="sm" />
           </div>
 
-          {data?.mode === "idle" || !data ? (
-            <div className="flex h-full items-center">
-              <p className="max-w-[820px] text-[28px] font-light leading-10 text-[#eee]">
-                Задавайте вопросы — они появятся на экране
-              </p>
-            </div>
-          ) : null}
-
-          {data?.mode === "list" ? (
-            <div className="flex h-full max-w-[820px] flex-col pt-[140px]">
-              <div className="mb-8 flex h-8 w-[160px] items-center rounded-lg bg-[#eee] px-3 text-[12px] font-medium text-black">
-                популярный
-              </div>
-              <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden">
-                {data.questions.length === 0 ? (
-                  <p className="text-[20px] font-light leading-7 text-[#9da1ab]">
-                    Пока нет вопросов
-                  </p>
-                ) : (
-                  data.questions.slice(0, 6).map((q) => (
-                    <article
-                      key={q.id}
-                      className="flex flex-col gap-5 rounded-tl-[20px] rounded-tr-[20px] rounded-br-[20px] bg-white/40 p-5"
-                    >
-                      <p className="text-[20px] font-light leading-7 text-[#eee]">
-                        {q.text}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/assets/like.svg" alt="" className="size-5" />
-                        <span className="text-[14px] leading-5 text-[#eee]">
-                          {q.likeCount}
-                        </span>
-                      </div>
-                    </article>
-                  ))
-                )}
-              </div>
-            </div>
-          ) : null}
-
-          {data?.mode === "focus" && data.featured ? (
-            <div className="flex h-full max-w-[820px] items-center">
-              <article className="flex w-full flex-col items-end gap-5 rounded-tl-[40px] rounded-tr-[40px] rounded-br-[40px] bg-white/40 p-10">
-                <p className="w-full text-[28px] leading-10 text-[#eee]">
-                  {data.featured.text}
-                </p>
-                <div className="flex items-center gap-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/assets/like.svg" alt="" className="size-6" />
-                  <span className="text-[20px] leading-8 text-[#eee]">
-                    {data.featured.likeCount}
-                  </span>
-                </div>
-              </article>
-            </div>
-          ) : null}
-        </div>
-
-        <aside className="flex w-[min(500px,34vw)] shrink-0 items-center justify-center">
-          <div className="flex w-[240px] flex-col items-center gap-6">
-            {data?.qrDataUrl ? (
-              <div className="rounded-[16px] bg-white p-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={data.qrDataUrl}
-                  alt="QR для вопросов"
-                  className="size-[216px]"
-                />
-              </div>
-            ) : (
-              <div className="size-[240px] rounded-[16px] bg-white/20" />
-            )}
-            <p className="w-[290px] text-center text-[28px] font-medium leading-10 text-[#eee]">
-              Задать вопрос можно здесь
+          <div className="flex min-h-0 flex-1 items-center justify-center px-8 pb-36 pt-24 md:px-16 lg:px-24">
+            <p className="qa-focus-enter w-full max-w-[1600px] text-center text-[clamp(40px,7vw,96px)] font-medium leading-[1.1] text-[#eee]">
+              {featured.text}
             </p>
           </div>
-        </aside>
-      </div>
+
+          <div className="absolute left-8 top-8 flex items-center gap-2 qa-screen-fade">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/like.svg" alt="" className="size-7" />
+            <span className="text-[22px] leading-8 text-[#eee]">
+              {featured.likeCount}
+            </span>
+          </div>
+
+          <div className="absolute bottom-8 right-8 qa-focus-enter [animation-delay:120ms]">
+            <div className="flex items-end gap-4">
+              <p className="max-w-[160px] pb-1 text-right text-[16px] font-medium leading-6 text-[#eee]">
+                Задать вопрос можно здесь
+              </p>
+              {data?.qrDataUrl ? (
+                <div className="rounded-[12px] bg-white p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={data.qrDataUrl}
+                    alt="QR для вопросов"
+                    className="size-[132px]"
+                  />
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div
+          key={mode}
+          className="relative z-10 flex h-full w-full qa-screen-fade"
+        >
+          <div className="relative min-w-0 flex-1 px-[100px] pb-16 pt-[60px]">
+            <div className="pointer-events-none absolute left-1/2 top-[60px] z-20 -translate-x-1/2">
+              <Logo href={null} size="lg" />
+            </div>
+
+            {mode === "idle" || !data ? (
+              <div className="flex h-full items-center">
+                <p className="qa-focus-enter max-w-[820px] text-[clamp(28px,3.2vw,44px)] font-light leading-[1.25] text-[#eee]">
+                  Задавайте вопросы — они появятся на экране
+                </p>
+              </div>
+            ) : null}
+
+            {mode === "list" && data ? (
+              <div className="flex h-full max-w-[820px] flex-col pt-[140px]">
+                <div className="mb-8 flex h-8 w-[160px] items-center rounded-lg bg-[#eee] px-3 text-[12px] font-medium text-black">
+                  популярный
+                </div>
+                <div className="stagger-in flex min-h-0 flex-1 flex-col gap-5 overflow-hidden">
+                  {data.questions.length === 0 ? (
+                    <p className="text-[20px] font-light leading-7 text-[#9da1ab]">
+                      Пока нет вопросов
+                    </p>
+                  ) : (
+                    data.questions.slice(0, 6).map((q) => (
+                      <article
+                        key={q.id}
+                        className="flex flex-col gap-5 rounded-tl-[20px] rounded-tr-[20px] rounded-br-[20px] bg-white/40 p-5"
+                      >
+                        <p className="text-[20px] font-light leading-7 text-[#eee]">
+                          {q.text}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/assets/like.svg" alt="" className="size-5" />
+                          <span className="text-[14px] leading-5 text-[#eee]">
+                            {q.likeCount}
+                          </span>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          <aside className="flex w-[min(500px,34vw)] shrink-0 items-center justify-center">
+            <div className="flex w-[240px] flex-col items-center">
+              <QrBlock dataUrl={data?.qrDataUrl} />
+            </div>
+          </aside>
+        </div>
+      )}
     </div>
   );
 }

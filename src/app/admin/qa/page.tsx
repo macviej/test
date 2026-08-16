@@ -25,6 +25,7 @@ export default function AdminQaPage() {
     mode: "list",
     questionId: null,
   });
+  const [knownIds, setKnownIds] = useState<Set<string>>(() => new Set());
 
   const load = useCallback(async () => {
     const qs = unansweredOnly ? "?unanswered=1" : "";
@@ -33,7 +34,13 @@ export default function AdminQaPage() {
       fetch("/api/admin/projector"),
     ]);
     const qaData = await qaRes.json();
-    if (qaRes.ok) setItems(qaData.questions || []);
+    if (qaRes.ok) {
+      const next = (qaData.questions || []) as QaItem[];
+      setItems(next);
+      setKnownIds((prev) =>
+        prev.size === 0 ? new Set(next.map((q) => q.id)) : prev,
+      );
+    }
     if (projRes.ok) {
       const projData = await projRes.json();
       setProjector({
@@ -57,6 +64,23 @@ export default function AdminQaPage() {
     };
   }, [ready, load]);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setKnownIds((prev) => {
+        let changed = false;
+        const merged = new Set(prev);
+        for (const item of items) {
+          if (!merged.has(item.id)) {
+            merged.add(item.id);
+            changed = true;
+          }
+        }
+        return changed ? merged : prev;
+      });
+    }, 480);
+    return () => window.clearTimeout(timer);
+  }, [items]);
+
   async function markAnswered(id: string) {
     await fetch(`/api/qa/${id}`, {
       method: "PATCH",
@@ -76,11 +100,13 @@ export default function AdminQaPage() {
   }
 
   async function remove(id: string) {
+    setItems((prev) => prev.filter((q) => q.id !== id));
     await fetch(`/api/qa/${id}`, { method: "DELETE" });
     await load();
   }
 
   async function setScreen(mode: ProjectorState["mode"], questionId?: string) {
+    setProjector({ mode, questionId: questionId ?? null });
     await fetch("/api/admin/projector", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -108,7 +134,7 @@ export default function AdminQaPage() {
             href="/qa/screen"
             target="_blank"
             rel="noreferrer"
-            className="text-[12px] font-semibold uppercase text-[#eee] underline"
+            className="admin-text-action text-[12px] font-semibold uppercase text-[#eee] underline decoration-transparent underline-offset-4 hover:decoration-[#eee] hover:text-white"
           >
             Открыть проектор
           </a>
@@ -116,7 +142,7 @@ export default function AdminQaPage() {
             <button
               type="button"
               onClick={() => setUnansweredOnly((v) => !v)}
-              className="flex h-8 items-center justify-center rounded-lg bg-[#eee] px-1.5"
+              className="admin-chip flex h-8 items-center justify-center rounded-lg bg-[#eee] px-1.5 hover:bg-white hover:shadow-[0_6px_16px_rgba(238,238,238,0.2)]"
               aria-label="Фильтр"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -125,7 +151,7 @@ export default function AdminQaPage() {
             <button
               type="button"
               onClick={() => setUnansweredOnly((v) => !v)}
-              className="flex h-8 items-center rounded-lg bg-[#eee] px-3 text-[12px] font-medium text-black"
+              className="admin-chip flex h-8 items-center rounded-lg bg-[#eee] px-3 text-[12px] font-medium text-black hover:bg-white hover:shadow-[0_6px_16px_rgba(238,238,238,0.2)]"
             >
               {unansweredOnly ? "неотвеченные" : "все"}
             </button>
@@ -156,10 +182,15 @@ export default function AdminQaPage() {
             items.map((q) => {
               const onScreen =
                 projector.mode === "focus" && projector.questionId === q.id;
+              const entering = knownIds.size > 0 && !knownIds.has(q.id);
               return (
                 <div
                   key={q.id}
-                  className="flex flex-col gap-2.5 rounded-[20px] bg-white/40 p-5"
+                  className={`qa-card flex flex-col gap-2.5 rounded-[20px] p-5 ${
+                    onScreen
+                      ? "bg-white/55 shadow-[0_0_0_1px_#43c510,0_12px_32px_rgba(67,197,16,0.18)]"
+                      : "bg-white/40 hover:bg-white/55 hover:-translate-y-0.5"
+                  } ${entering ? "qa-card-enter" : ""}`}
                 >
                   <p className="text-[14px] font-medium leading-5 text-[#eee]">
                     {q.text}
@@ -181,8 +212,10 @@ export default function AdminQaPage() {
                               ? setScreen("list")
                               : setScreen("focus", q.id)
                           }
-                          className={`text-[11px] underline ${
-                            onScreen ? "text-[#43c510]" : "text-[#eee]"
+                          className={`admin-text-action text-[11px] underline ${
+                            onScreen
+                              ? "text-[#43c510] hover:text-[#6ee03a]"
+                              : "text-[#eee] hover:text-white"
                           }`}
                         >
                           {onScreen ? "на экране" : "на проектор"}
@@ -192,7 +225,7 @@ export default function AdminQaPage() {
                         <button
                           type="button"
                           onClick={() => reopen(q.id)}
-                          className="text-[11px] text-[#43c510]"
+                          className="admin-text-action text-[11px] text-[#43c510] hover:text-[#6ee03a]"
                         >
                           отвечен
                         </button>
@@ -200,7 +233,7 @@ export default function AdminQaPage() {
                         <button
                           type="button"
                           onClick={() => markAnswered(q.id)}
-                          className="text-[11px] text-[#eee] underline"
+                          className="admin-text-action text-[11px] text-[#eee] underline hover:text-white"
                         >
                           отметить
                         </button>
@@ -208,7 +241,7 @@ export default function AdminQaPage() {
                       <button
                         type="button"
                         onClick={() => remove(q.id)}
-                        className="text-[11px] text-[#9da1ab] underline"
+                        className="admin-text-action text-[11px] text-[#9da1ab] underline hover:text-[#d15a32]"
                       >
                         удалить
                       </button>
@@ -237,8 +270,10 @@ function ModeChip({
     <button
       type="button"
       onClick={onClick}
-      className={`h-8 rounded-lg px-3 text-[12px] font-semibold ${
-        active ? "bg-[#eee] text-black" : "border border-[#eee] text-[#eee]"
+      className={`admin-chip h-8 rounded-lg px-3 text-[12px] font-semibold ${
+        active
+          ? "bg-[#eee] text-black hover:bg-white hover:shadow-[0_6px_16px_rgba(238,238,238,0.22)]"
+          : "border border-[#eee] text-[#eee] hover:bg-white/15 hover:border-white"
       }`}
     >
       {children}

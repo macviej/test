@@ -90,6 +90,51 @@ a {
   }
 }
 
+@keyframes qa-focus-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(28px);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes qa-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes like-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes screen-crossfade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .animate-stage-in {
   animation: stage-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -104,6 +149,65 @@ a {
 
 .animate-dropdown-in {
   animation: dropdown-in 0.22s ease both;
+}
+
+.qa-focus-enter {
+  animation: qa-focus-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.qa-card-enter {
+  animation: qa-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.qa-screen-fade {
+  animation: screen-crossfade 0.45s ease both;
+}
+
+.like-pop {
+  animation: like-pop 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.qa-card {
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.admin-icon-btn {
+  transition:
+    transform 0.22s ease,
+    opacity 0.22s ease,
+    filter 0.22s ease;
+}
+
+.admin-icon-btn:hover {
+  transform: scale(1.12);
+  opacity: 0.85;
+}
+
+.admin-text-action {
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-text-action:hover {
+  transform: translateY(-1px);
+}
+
+.admin-chip {
+  transition:
+    background-color 0.22s ease,
+    color 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.admin-row {
+  transition: background-color 0.22s ease;
 }
 
 .stagger-in > * {
@@ -134,6 +238,10 @@ a {
   .animate-fade-in,
   .animate-dialog-in,
   .animate-dropdown-in,
+  .qa-focus-enter,
+  .qa-card-enter,
+  .qa-screen-fade,
+  .like-pop,
   .stagger-in > * {
     animation: none;
   }

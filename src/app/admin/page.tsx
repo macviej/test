@@ -30,7 +30,7 @@ export default function AdminHomePage() {
           type="button"
           onClick={logout}
           aria-label="Выйти"
-          className="size-6"
+          className="admin-icon-btn size-6 hover:rotate-12"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/logout.svg" alt="" className="size-6" />

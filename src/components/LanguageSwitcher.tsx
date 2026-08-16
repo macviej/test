@@ -62,7 +62,7 @@ export function LanguageSwitcher({ value, onChange }: Props) {
               <button
                 key={item}
                 type="button"
-                className="w-full text-left"
+                className="w-full text-left opacity-80 transition-opacity duration-200 hover:opacity-100 hover:tracking-wide"
                 onClick={() => select(item)}
               >
                 {item}
@@ -77,7 +77,7 @@ export function LanguageSwitcher({ value, onChange }: Props) {
     <div ref={rootRef} className="relative h-6 w-[53px]">
       <button
         type="button"
-        className="absolute right-0 top-1/2 flex -translate-y-1/2 items-center gap-1 pl-[5px] text-[14px] font-medium leading-5 text-[#eee]"
+        className="absolute right-0 top-1/2 flex -translate-y-1/2 items-center gap-1 pl-[5px] text-[14px] font-medium leading-5 text-[#eee] transition-opacity duration-200 hover:opacity-80"
         aria-label="Language"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}

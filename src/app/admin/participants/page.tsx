@@ -107,7 +107,7 @@ export default function AdminParticipantsPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Поиск"
-            className="w-full rounded-[20px] border border-[#eee] bg-transparent px-5 py-3 text-[14px] text-[#eee] outline-none placeholder:text-[#9da1ab]"
+            className="w-full rounded-[20px] border border-[#eee] bg-transparent px-5 py-3 text-[14px] text-[#eee] outline-none placeholder:text-[#9da1ab] transition-colors duration-200 hover:border-white/80 focus:border-white"
           />
         </div>
 
@@ -125,8 +125,10 @@ export default function AdminParticipantsPage() {
               return (
                 <div
                   key={p.id}
-                  className={`w-full ${
-                    index % 2 === 0 ? "bg-white/40" : "bg-white/20"
+                  className={`admin-row w-full ${
+                    index % 2 === 0
+                      ? "bg-white/40 hover:bg-white/55"
+                      : "bg-white/20 hover:bg-white/40"
                   }`}
                 >
                   <div className="flex w-full items-start gap-3 p-4">
@@ -134,7 +136,7 @@ export default function AdminParticipantsPage() {
                       type="button"
                       onClick={() => checkIn(p)}
                       disabled={p.checkedIn || pendingId === p.id}
-                      className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full border border-[#eee]"
+                      className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full border border-[#eee] transition-all duration-200 hover:scale-110 hover:border-white hover:bg-white/15 disabled:hover:scale-100"
                       aria-label={
                         p.checkedIn ? "Уже отмечен" : "Отметить участника"
                       }
@@ -176,7 +178,7 @@ export default function AdminParticipantsPage() {
                     </button>
                   </div>
                   {isOpen ? (
-                    <div className="flex flex-col gap-1 px-4 pb-4 pl-[52px] text-[13px] font-light leading-5 text-[#eee]">
+                    <div className="animate-dialog-in flex flex-col gap-1 px-4 pb-4 pl-[52px] text-[13px] font-light leading-5 text-[#eee]">
                       <p>{p.phone}</p>
                       {p.telegram ? <p>@{p.telegram.replace(/^@/, "")}</p> : null}
                       <p>{p.email}</p>

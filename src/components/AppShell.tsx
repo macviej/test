@@ -23,7 +23,7 @@ export function AppShell({
     <button
       type="button"
       onClick={onBack}
-      className="flex h-6 w-[30px] items-center justify-center"
+      className="admin-icon-btn flex h-6 w-[30px] items-center justify-center"
       aria-label="Назад"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -32,7 +32,7 @@ export function AppShell({
   ) : (
     <Link
       href={backHref}
-      className="flex h-6 w-[30px] items-center justify-center"
+      className="admin-icon-btn flex h-6 w-[30px] items-center justify-center"
       aria-label="Назад"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

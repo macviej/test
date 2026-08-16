@@ -194,7 +194,7 @@ export default function AdminScannerPage() {
         <header className="pointer-events-auto relative mb-8 flex h-10 shrink-0 items-center justify-center">
           <Link
             href="/admin"
-            className="absolute left-0 top-1/2 flex h-6 w-[30px] -translate-y-1/2 items-center justify-center"
+            className="admin-icon-btn absolute left-0 top-1/2 flex h-6 w-[30px] -translate-y-1/2 items-center justify-center"
             aria-label="Назад"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -248,12 +248,12 @@ export default function AdminScannerPage() {
                 value={manualCode}
                 onChange={(e) => setManualCode(e.target.value)}
                 placeholder="IGC-2026-001"
-                className="w-full rounded-[20px] border border-[#eee] bg-black/60 px-5 py-3 text-center text-[14px] text-[#eee] outline-none placeholder:text-[#9da1ab]"
+                className="w-full rounded-[20px] border border-[#eee] bg-black/60 px-5 py-3 text-center text-[14px] text-[#eee] outline-none placeholder:text-[#9da1ab] transition-colors duration-200 hover:border-white/80 focus:border-white"
               />
               <button
                 type="submit"
                 disabled={loading || !manualCode.trim()}
-                className="h-[44px] rounded-[20px] bg-[#eee] text-[14px] font-semibold uppercase text-black disabled:opacity-50"
+                className="h-[44px] rounded-[20px] bg-[#eee] text-[14px] font-semibold uppercase text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_8px_20px_rgba(238,238,238,0.22)] disabled:opacity-50 disabled:hover:translate-y-0"
               >
                 {loading ? "Проверяем..." : "Отметить"}
               </button>
@@ -264,7 +264,7 @@ export default function AdminScannerPage() {
             type="button"
             onClick={onShutter}
             aria-label={result ? "Сканировать дальше" : "Ввод кода"}
-            className="pointer-events-auto relative size-[56px] shrink-0"
+            className="admin-icon-btn pointer-events-auto relative size-[56px] shrink-0"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

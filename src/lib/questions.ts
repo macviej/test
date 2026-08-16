@@ -90,6 +90,7 @@ export async function toggleLike(id: string, viewerKey: string) {
 export type ProjectorMode = "idle" | "list" | "focus";
 
 export async function getProjectorState() {
+  await ensureAppSchema();
   return prisma.projectorState.upsert({
     where: { id: "default" },
     create: { id: "default", mode: "list", questionId: null },
