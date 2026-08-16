@@ -1,4 +1,4 @@
 -- AlterTable
-ALTER TABLE "Participant" ADD COLUMN "lunchType" TEXT;
-ALTER TABLE "Participant" ADD COLUMN "hasAllergy" BOOLEAN;
-ALTER TABLE "Participant" ADD COLUMN "allergyNote" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "Participant" ADD COLUMN IF NOT EXISTS "lunchType" TEXT;
+ALTER TABLE "Participant" ADD COLUMN IF NOT EXISTS "hasAllergy" BOOLEAN;
+ALTER TABLE "Participant" ADD COLUMN IF NOT EXISTS "allergyNote" TEXT NOT NULL DEFAULT '';

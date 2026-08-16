@@ -228,7 +228,7 @@ export default function RegisterPage() {
                 autoComplete="email"
               />
 
-              <label className="flex items-center gap-3">
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => update("consent", !form.consent)}
@@ -240,10 +240,14 @@ export default function RegisterPage() {
                     <span className="block size-full rounded-[4px] bg-[#eee]" />
                   ) : null}
                 </button>
-                <span className="text-[12px] font-medium leading-5 text-[#9da1ab]">
+                <button
+                  type="button"
+                  onClick={() => update("consent", !form.consent)}
+                  className="text-left text-[12px] font-medium leading-5 text-[#9da1ab]"
+                >
                   {t.consent}
-                </span>
-              </label>
+                </button>
+              </div>
             </div>
           </div>
 

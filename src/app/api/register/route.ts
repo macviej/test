@@ -87,7 +87,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ participant });
-  } catch {
+  } catch (error) {
+    console.error("register failed", error);
     return NextResponse.json(
       { error: "Не удалось сохранить регистрацию" },
       { status: 500 },

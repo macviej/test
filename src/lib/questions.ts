@@ -1,5 +1,5 @@
 import type { Question as DbQuestion, QuestionStatus } from "@prisma/client";
-import { prisma } from "./db";
+import { prisma, ensureAppSchema } from "./db";
 import type { Question } from "./types";
 
 function mapQuestion(row: DbQuestion): Question {

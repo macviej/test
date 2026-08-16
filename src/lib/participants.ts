@@ -1,5 +1,5 @@
 import type { Participant as DbParticipant } from "@prisma/client";
-import { prisma } from "./db";
+import { prisma, ensureAppSchema } from "./db";
 import type { LunchType, Participant, RegisterInput } from "./types";
 import { extractParticipantCode } from "./ticket-code";
 
@@ -39,6 +39,7 @@ async function nextCode() {
 export async function createParticipant(
   input: RegisterInput,
 ): Promise<Participant> {
+  await ensureAppSchema();
   const code = await nextCode();
   const row = await prisma.participant.create({
     data: {
@@ -81,6 +82,7 @@ export function normalizePhone(phone: string) {
 export async function getParticipantByCode(
   code: string,
 ): Promise<Participant | null> {
+  await ensureAppSchema();
   const normalized =
     extractParticipantCode(code) ||
     code.trim().toUpperCase().replace(/^#/, "");
@@ -98,6 +100,7 @@ export async function findParticipantByPhoneAndLastName(
   const last = lastName.trim();
   if (!phoneDigits || !last) return null;
 
+  await ensureAppSchema();
   const rows = await prisma.participant.findMany({
     where: {
       lastName: { equals: last, mode: "insensitive" },
@@ -113,6 +116,7 @@ export async function findParticipantByPhoneAndLastName(
 }
 
 export async function listParticipants(): Promise<Participant[]> {
+  await ensureAppSchema();
   const rows = await prisma.participant.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -125,6 +129,7 @@ export async function checkInParticipant(
   const normalized =
     extractParticipantCode(code) ||
     code.trim().toUpperCase().replace(/^#/, "");
+  await ensureAppSchema();
   const current = await prisma.participant.findUnique({
     where: { code: normalized },
   });
