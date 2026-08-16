@@ -1,8 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { Logo } from "@/components/Logo";
+import { AppShell } from "@/components/AppShell";
+import { Button } from "@/components/Button";
 import type { Participant } from "@/lib/types";
 import { extractParticipantCode } from "@/lib/ticket-code";
 import { useAdminGuard } from "@/lib/use-admin-guard";
@@ -73,6 +73,7 @@ export default function AdminScannerPage() {
       setResult(data);
       setManualCode("");
       setManualOpen(false);
+      setScanning(false);
     } catch {
       setError("Не удалось отметить участника");
       pausedRef.current = false;
@@ -119,8 +120,8 @@ export default function AdminScannerPage() {
           fps: 12,
           qrbox: (viewfinderWidth, viewfinderHeight) => {
             const size = Math.max(
-              180,
-              Math.min(280, viewfinderWidth, viewfinderHeight) * 0.7,
+              140,
+              Math.min(220, viewfinderWidth, viewfinderHeight) * 0.82,
             );
             return { width: size, height: size };
           },
@@ -141,16 +142,6 @@ export default function AdminScannerPage() {
     }
   }
 
-  async function onShutter() {
-    if (result) {
-      setResult(null);
-      setError("");
-      await startScanner();
-      return;
-    }
-    setManualOpen((v) => !v);
-  }
-
   async function onManualSubmit(event: FormEvent) {
     event.preventDefault();
     await checkIn(manualCode);
@@ -158,121 +149,96 @@ export default function AdminScannerPage() {
 
   if (!ready) {
     return (
-      <div className="relative flex min-h-dvh items-center justify-center bg-black text-[#eee]">
-        <p className="text-[14px] text-[#9da1ab]">Загрузка...</p>
-      </div>
+      <AppShell showBack backHref="/admin">
+        <p className="mt-20 text-center text-[14px] text-[#9da1ab]">Загрузка...</p>
+      </AppShell>
     );
   }
 
   return (
-    <div className="relative h-dvh overflow-hidden bg-black text-[#eee]">
-      <div className="absolute inset-0 z-0 bg-black">
-        <div
-          id="admin-qr-reader"
-          className="absolute inset-0 h-full w-full overflow-hidden [&_video]:h-full [&_video]:w-full [&_video]:object-cover"
-        />
-        {!scanning ? (
-          <div className="absolute inset-0 bg-black">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/assets/stars-bg.png"
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover object-bottom opacity-60 mix-blend-hard-light"
-            />
+    <AppShell showBack backHref="/admin">
+      <div className="flex min-h-0 flex-1 flex-col items-center">
+        <h1 className="shrink-0 text-center text-[18px] font-medium uppercase leading-6 text-[#eee]">
+          Сканер
+        </h1>
+
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6">
+          <div className="relative size-[232px] overflow-hidden rounded-[28px] bg-black/40 shadow-[0_0_40px_rgba(20,76,205,0.25)]">
             <div
-              className="absolute inset-0"
-              style={{
-                boxShadow:
-                  "inset 0px 24px 24px -8px rgba(35,101,255,0.15), inset 0px -83px 83px -25px rgba(255,255,255,0.4), inset 0px -166px 124px -33px rgba(102,148,255,0.5), inset 0px -331px 249px -124px #144ccd",
-              }}
+              id="admin-qr-reader"
+              className="absolute inset-0 overflow-hidden [&_video]:h-full [&_video]:w-full [&_video]:object-cover"
             />
-          </div>
-        ) : null}
-      </div>
-
-      <div className="pointer-events-none relative z-10 mx-auto flex h-full w-full max-w-[402px] flex-col px-5 pb-8 pt-5">
-        <header className="pointer-events-auto relative mb-8 flex h-10 shrink-0 items-center justify-center">
-          <Link
-            href="/admin"
-            className="admin-icon-btn absolute left-0 top-1/2 flex h-6 w-[30px] -translate-y-1/2 items-center justify-center"
-            aria-label="Назад"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/assets/back.svg" alt="" className="h-6 w-[30px]" />
-          </Link>
-          <Logo />
-        </header>
-
-        <div className="relative flex flex-1 flex-col items-center justify-end">
-          <div className="pointer-events-none absolute left-1/2 top-[calc(50%-34px)] size-[232px] -translate-x-1/2 -translate-y-1/2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/assets/scanner-frame.svg"
               alt=""
-              className="size-[232px]"
+              className="pointer-events-none absolute inset-0 size-[232px]"
             />
+            {result ? (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/80 px-4 text-center backdrop-blur-sm">
+                <p className="text-[16px] font-medium text-[#eee]">
+                  {result.participant.firstName} {result.participant.lastName}
+                </p>
+                <p className="mt-1 text-[13px] text-[#9da1ab]">
+                  #{result.participant.code}
+                </p>
+                <p
+                  className={`mt-3 text-[14px] font-medium ${
+                    result.alreadyCheckedIn ? "text-[#d15a32]" : "text-[#43c510]"
+                  }`}
+                >
+                  {result.alreadyCheckedIn
+                    ? "Уже был отмечен ранее"
+                    : "Успешный check-in"}
+                </p>
+              </div>
+            ) : null}
           </div>
 
-          {result ? (
-            <div className="pointer-events-auto absolute left-1/2 top-[calc(50%-34px)] w-[min(100%,280px)] -translate-x-1/2 -translate-y-1/2 rounded-[20px] border border-[#eee] bg-black/80 px-5 py-4 text-center backdrop-blur-sm">
-              <p className="text-[16px] font-medium text-[#eee]">
-                {result.participant.firstName} {result.participant.lastName}
-              </p>
-              <p className="mt-1 text-[13px] text-[#9da1ab]">
-                #{result.participant.code}
-              </p>
-              <p
-                className={`mt-3 text-[14px] font-medium ${
-                  result.alreadyCheckedIn ? "text-[#d15a32]" : "text-[#43c510]"
-                }`}
-              >
-                {result.alreadyCheckedIn
-                  ? "Уже был отмечен ранее"
-                  : "Успешный check-in"}
-              </p>
-            </div>
-          ) : null}
-
           {error && !result ? (
-            <p className="pointer-events-auto mb-4 max-w-[280px] text-center text-[13px] text-[#d15a32]">
+            <p className="max-w-[280px] text-center text-[13px] text-[#d15a32]">
               {error}
             </p>
           ) : null}
 
-          {manualOpen && !result ? (
+          {result ? (
+            <Button type="button" className="w-[240px]" onClick={() => void startScanner()}>
+              Дальше
+            </Button>
+          ) : manualOpen ? (
             <form
               onSubmit={onManualSubmit}
-              className="pointer-events-auto mb-6 flex w-full flex-col gap-3"
+              className="flex w-[240px] flex-col gap-3"
             >
               <input
                 value={manualCode}
                 onChange={(e) => setManualCode(e.target.value)}
                 placeholder="IGC-2026-001"
-                className="w-full rounded-[20px] border border-[#eee] bg-black/60 px-5 py-3 text-center text-[14px] text-[#eee] outline-none placeholder:text-[#9da1ab] transition-colors duration-200 hover:border-white/80 focus:border-white"
+                className="w-full rounded-[20px] border border-[#eee] bg-transparent px-5 py-3 text-center text-[14px] text-[#eee] outline-none placeholder:text-[#9da1ab] transition-colors duration-200 hover:border-white/80 focus:border-white"
               />
-              <button
+              <Button
                 type="submit"
                 disabled={loading || !manualCode.trim()}
-                className="h-[44px] rounded-[20px] bg-[#eee] text-[14px] font-semibold uppercase text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_8px_20px_rgba(238,238,238,0.22)] disabled:opacity-50 disabled:hover:translate-y-0"
               >
                 {loading ? "Проверяем..." : "Отметить"}
+              </Button>
+              <button
+                type="button"
+                onClick={() => setManualOpen(false)}
+                className="admin-text-action text-center text-[13px] text-[#9da1ab] hover:text-[#eee]"
+              >
+                Скрыть
               </button>
             </form>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={onShutter}
-            aria-label={result ? "Сканировать дальше" : "Ввод кода"}
-            className="admin-icon-btn pointer-events-auto relative size-[56px] shrink-0"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/assets/scanner-shutter.svg"
-              alt=""
-              className="size-[56px]"
-            />
-          </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setManualOpen(true)}
+              className="admin-text-action text-[13px] text-[#9da1ab] underline hover:text-[#eee]"
+            >
+              Ввести код вручную
+            </button>
+          )}
         </div>
       </div>
 
@@ -296,6 +262,6 @@ export default function AdminScannerPage() {
           display: none !important;
         }
       `}</style>
-    </div>
+    </AppShell>
   );
 }

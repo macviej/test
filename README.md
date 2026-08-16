@@ -32,7 +32,7 @@ https://imagodeiconf.vercel.app
 Админка: https://imagodeiconf.vercel.app/admin/login  
 Креды задаются в Vercel → Environment Variables: `ADMIN_LOGIN`, `ADMIN_PASSWORD`, `ADMIN_SECRET` (в проде дефолта `admin`/`admin` больше нет).
 
-На билете по умолчанию показываются «Пригласить друга» и «Отменить регистрацию». За неделю до конференции поставьте `NEXT_PUBLIC_TICKET_CTA=qa` — вместо них будет «Задать вопрос».
+На билете всегда есть «Задать вопрос». Пока `NEXT_PUBLIC_TICKET_CTA=invite`, рядом остаются «Пригласить друга» и отмена. За неделю до конференции поставьте `qa` — останется только вход в Q&A.
 
 ## База данных
 

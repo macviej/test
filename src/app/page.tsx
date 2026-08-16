@@ -11,6 +11,7 @@ import {
   COOKIES_STORAGE_KEY,
   getRegistrationStatus,
   getWelcomeCopy,
+  ticketCopy,
 } from "@/lib/i18n";
 import { useLocale } from "@/lib/use-locale";
 
@@ -104,14 +105,24 @@ export default function WelcomePage() {
                 </Button>
               </Link>
             ) : null}
+            <Link href="/qa" className="w-full">
+              <Button type="button" variant="outline">
+                {ticketCopy[locale].askQuestion}
+              </Button>
+            </Link>
           </div>
         ) : null}
 
         {status === "closed" && copy.ticketLogin ? (
-          <div className="mt-auto w-full shrink-0 animate-stage-in [animation-delay:180ms]">
+          <div className="mt-auto flex w-full shrink-0 flex-col gap-3 animate-stage-in [animation-delay:180ms]">
             <Link href="/ticket" className="w-full">
               <Button type="button" variant="outline" className="w-full">
                 {copy.ticketLogin}
+              </Button>
+            </Link>
+            <Link href="/qa" className="w-full">
+              <Button type="button" variant="outline" className="w-full">
+                {ticketCopy[locale].askQuestion}
               </Button>
             </Link>
           </div>

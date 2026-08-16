@@ -150,7 +150,7 @@ export default function QaPage() {
         </button>
       }
     >
-      <div className="flex flex-1 flex-col gap-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-4">
         {infoOpen ? (
           <p className="animate-dialog-in rounded-[16px] border border-[#eee]/40 px-4 py-3 text-[13px] leading-5 text-[#eee]">
             Задавайте вопросы спикерам. Популярные поднимаются выше по лайкам.

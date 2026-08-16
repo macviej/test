@@ -106,7 +106,7 @@ export default function TicketPage() {
       }
       headerRight={<LanguageSwitcher value={locale} onChange={setLocale} />}
     >
-      <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <div className="relative flex min-h-0 flex-1 flex-col">
         {loading ? (
           <p className="mt-20 text-center text-[14px] text-[#9da1ab]">
             {t.loading}
@@ -115,7 +115,7 @@ export default function TicketPage() {
           <p className="mt-20 text-center text-[14px] text-[#d15a32]">{error}</p>
         ) : data && p ? (
           <>
-            <div className="flex min-h-0 flex-1 flex-col animate-stage-in">
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto animate-stage-in">
               <div className="flex flex-col gap-4 text-center">
                 <h1 className="text-[20px] font-semibold uppercase leading-7 text-[#eee]">
                   {t.thanks}
@@ -139,38 +139,35 @@ export default function TicketPage() {
                 </p>
               </div>
 
-              {ctaMode === "invite" ? (
-                <div className="mt-auto flex flex-col gap-3 pt-8">
-                  <Button type="button" arrow onClick={inviteFriend}>
-                    {t.invite}
-                  </Button>
-                </div>
-              ) : (
-                <div className="mt-auto flex flex-col gap-3 pt-8">
-                  <Link href="/qa" className="w-full">
-                    <Button type="button" arrow>
-                      {t.askQuestion}
-                    </Button>
-                  </Link>
-                </div>
-              )}
             </div>
 
-            {ctaMode === "invite" ? (
-              <div className="mt-8 flex flex-col items-center gap-1 pb-2 text-center">
-                <p className="w-full text-[14px] font-light leading-5 text-[#eee]">
-                  {t.cantCome}
-                </p>
-                <Button
-                  variant="textArrow"
-                  arrow
-                  type="button"
-                  onClick={() => alert(t.cancelSoon)}
-                >
-                  {t.cancel}
+            <div className="mt-auto flex shrink-0 flex-col gap-3 pt-6">
+              <Link href="/qa" className="w-full">
+                <Button type="button" arrow>
+                  {t.askQuestion}
                 </Button>
-              </div>
-            ) : null}
+              </Link>
+              {ctaMode === "invite" ? (
+                <Button type="button" variant="outline" arrow onClick={inviteFriend}>
+                  {t.invite}
+                </Button>
+              ) : null}
+              {ctaMode === "invite" ? (
+                <div className="flex flex-col items-center gap-1 pb-1 pt-2 text-center">
+                  <p className="w-full text-[14px] font-light leading-5 text-[#eee]">
+                    {t.cantCome}
+                  </p>
+                  <Button
+                    variant="textArrow"
+                    arrow
+                    type="button"
+                    onClick={() => alert(t.cancelSoon)}
+                  >
+                    {t.cancel}
+                  </Button>
+                </div>
+              ) : null}
+            </div>
           </>
         ) : null}
       </div>
