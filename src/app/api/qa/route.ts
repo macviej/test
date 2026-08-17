@@ -5,16 +5,13 @@ import {
   listQuestions,
   publicQuestion,
 } from "@/lib/questions";
-import {
-  getOrCreateVisitorKey,
-  visitorCookieOptions,
-} from "@/lib/visitor";
+import { applyVisitorCookie, getViewerIdentity } from "@/lib/visitor";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const unansweredOnly = searchParams.get("unanswered") === "1";
   const isAdmin = await isAdminAuthenticated();
-  const { key, setCookie } = await getOrCreateVisitorKey();
+  const identity = await getViewerIdentity(request);
 
   const questions = await listQuestions({
     includeHidden: false,
@@ -22,15 +19,9 @@ export async function GET(request: Request) {
   });
 
   const response = NextResponse.json({
-    questions: questions.map((q) => publicQuestion(q, key)),
+    questions: questions.map((q) => publicQuestion(q, identity.aliases)),
   });
-
-  if (setCookie) {
-    const opts = visitorCookieOptions(key);
-    response.cookies.set(opts.name, opts.value, opts);
-  }
-
-  return response;
+  return applyVisitorCookie(response, identity);
 }
 
 export async function POST(request: Request) {
@@ -39,21 +30,17 @@ export async function POST(request: Request) {
       text?: string;
       authorLabel?: string;
     };
-    const { key, setCookie } = await getOrCreateVisitorKey();
+    const identity = await getViewerIdentity(request);
     const question = await createQuestion({
       text: body.text || "",
-      authorKey: key,
+      authorKey: identity.key,
       authorLabel: body.authorLabel,
     });
 
     const response = NextResponse.json({
-      question: publicQuestion(question, key),
+      question: publicQuestion(question, identity.aliases),
     });
-    if (setCookie) {
-      const opts = visitorCookieOptions(key);
-      response.cookies.set(opts.name, opts.value, opts);
-    }
-    return response;
+    return applyVisitorCookie(response, identity);
   } catch (error) {
     const message = error instanceof Error ? error.message : "ERROR";
     if (message === "EMPTY") {

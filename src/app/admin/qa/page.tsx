@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { useReorderAnimation } from "@/hooks/useReorderAnimation";
+import { deviceHeaders } from "@/lib/device-id";
 import { useAdminGuard } from "@/lib/use-admin-guard";
 
 type QaItem = {
@@ -30,7 +32,7 @@ export default function AdminQaPage() {
   const load = useCallback(async () => {
     const qs = unansweredOnly ? "?unanswered=1" : "";
     const [qaRes, projRes] = await Promise.all([
-      fetch(`/api/qa${qs}`),
+      fetch(`/api/qa${qs}`, { headers: deviceHeaders() }),
       fetch("/api/admin/projector"),
     ]);
     const qaData = await qaRes.json();
@@ -81,6 +83,8 @@ export default function AdminQaPage() {
     return () => window.clearTimeout(timer);
   }, [items]);
 
+  const listRef = useReorderAnimation(items.map((q) => q.id));
+
   async function markAnswered(id: string) {
     await fetch(`/api/qa/${id}`, {
       method: "PATCH",
@@ -101,7 +105,10 @@ export default function AdminQaPage() {
 
   async function remove(id: string) {
     setItems((prev) => prev.filter((q) => q.id !== id));
-    await fetch(`/api/qa/${id}`, { method: "DELETE" });
+    await fetch(`/api/qa/${id}`, {
+      method: "DELETE",
+      headers: deviceHeaders(),
+    });
     await load();
   }
 
@@ -173,7 +180,10 @@ export default function AdminQaPage() {
           </ModeChip>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-4">
+        <div
+          ref={listRef}
+          className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-4"
+        >
           {items.length === 0 ? (
             <p className="mt-10 text-center text-[14px] text-[#9da1ab]">
               Вопросов пока нет
@@ -186,10 +196,11 @@ export default function AdminQaPage() {
               return (
                 <div
                   key={q.id}
+                  data-flip-id={q.id}
                   className={`qa-card flex flex-col gap-2.5 rounded-[20px] p-5 ${
                     onScreen
                       ? "bg-white/55 shadow-[0_0_0_1px_#43c510,0_12px_32px_rgba(67,197,16,0.18)]"
-                      : "bg-white/40 hover:bg-white/55 hover:-translate-y-0.5"
+                      : "bg-white/40 hover:bg-white/55"
                   } ${entering ? "qa-card-enter" : ""}`}
                 >
                   <p className="text-[14px] font-medium leading-5 text-[#eee]">

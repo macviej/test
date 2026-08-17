@@ -5,7 +5,7 @@ import {
   publicQuestion,
   updateQuestionStatus,
 } from "@/lib/questions";
-import { readVisitorKey } from "@/lib/visitor";
+import { applyVisitorCookie, getViewerIdentity } from "@/lib/visitor";
 import type { QuestionStatus } from "@/lib/types";
 
 type Params = { params: Promise<{ id: string }> };
@@ -29,17 +29,18 @@ export async function PATCH(request: Request, { params }: Params) {
   return NextResponse.json({ question: publicQuestion(question) });
 }
 
-export async function DELETE(_request: Request, { params }: Params) {
+export async function DELETE(request: Request, { params }: Params) {
   const { id } = await params;
   const isAdmin = await isAdminAuthenticated();
-  const visitorKey = await readVisitorKey();
+  const identity = await getViewerIdentity(request);
 
   try {
-    const question = await deleteQuestion(id, visitorKey, isAdmin);
+    const question = await deleteQuestion(id, identity.aliases, isAdmin);
     if (!question) {
       return NextResponse.json({ error: "Не найдено" }, { status: 404 });
     }
-    return NextResponse.json({ ok: true });
+    const response = NextResponse.json({ ok: true });
+    return applyVisitorCookie(response, identity);
   } catch (error) {
     if (error instanceof Error && error.message === "FORBIDDEN") {
       return NextResponse.json({ error: "Нельзя удалить" }, { status: 403 });

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
+import { useReorderAnimation } from "@/hooks/useReorderAnimation";
 
 type ScreenQuestion = {
   id: string;
@@ -58,6 +59,8 @@ export default function ProjectorScreenPage() {
 
   const mode = data?.mode ?? "idle";
   const featured = data?.featured;
+  const listIds = data?.questions.slice(0, 6).map((q) => q.id) ?? [];
+  const listRef = useReorderAnimation(listIds);
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-black text-[#eee]">
@@ -142,7 +145,10 @@ export default function ProjectorScreenPage() {
                 <div className="mb-8 flex h-8 w-[160px] items-center rounded-lg bg-[#eee] px-3 text-[12px] font-medium text-black">
                   популярный
                 </div>
-                <div className="stagger-in flex min-h-0 flex-1 flex-col gap-5 overflow-hidden">
+                <div
+                  ref={listRef}
+                  className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden"
+                >
                   {data.questions.length === 0 ? (
                     <p className="text-[20px] font-light leading-7 text-[#9da1ab]">
                       Пока нет вопросов
@@ -151,7 +157,8 @@ export default function ProjectorScreenPage() {
                     data.questions.slice(0, 6).map((q) => (
                       <article
                         key={q.id}
-                        className="flex flex-col gap-5 rounded-tl-[20px] rounded-tr-[20px] rounded-br-[20px] bg-white/40 p-5"
+                        data-flip-id={q.id}
+                        className="qa-card flex flex-col gap-5 rounded-tl-[20px] rounded-tr-[20px] rounded-br-[20px] bg-white/40 p-5"
                       >
                         <p className="text-[20px] font-light leading-7 text-[#eee]">
                           {q.text}

@@ -2,6 +2,8 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { useReorderAnimation } from "@/hooks/useReorderAnimation";
+import { deviceHeaders } from "@/lib/device-id";
 
 type QaItem = {
   id: string;
@@ -23,10 +25,11 @@ export default function QaPage() {
   const [sending, setSending] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [likeBurst, setLikeBurst] = useState<string | null>(null);
+  const [likePending, setLikePending] = useState<string | null>(null);
   const [knownIds, setKnownIds] = useState<Set<string>>(() => new Set());
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/qa");
+    const res = await fetch("/api/qa", { headers: deviceHeaders() });
     const data = await res.json();
     if (!res.ok) return;
     const next = (data.questions || []) as QaItem[];
@@ -76,6 +79,8 @@ export default function QaPage() {
     return list;
   }, [items, sort]);
 
+  const listRef = useReorderAnimation(visible.map((q) => q.id));
+
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (!text.trim()) return;
@@ -95,7 +100,7 @@ export default function QaPage() {
 
       const res = await fetch("/api/qa", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: deviceHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ text, authorLabel }),
       });
       const data = await res.json();
@@ -113,6 +118,8 @@ export default function QaPage() {
   }
 
   async function like(id: string) {
+    if (likePending) return;
+    setLikePending(id);
     setLikeBurst(id);
     setItems((prev) =>
       prev.map((q) =>
@@ -125,13 +132,39 @@ export default function QaPage() {
           : q,
       ),
     );
-    const res = await fetch(`/api/qa/${id}/like`, { method: "POST" });
-    if (res.ok) await load();
+    try {
+      const res = await fetch(`/api/qa/${id}/like`, {
+        method: "POST",
+        headers: deviceHeaders(),
+      });
+      const data = await res.json();
+      if (res.ok && data.question) {
+        const next = data.question as QaItem;
+        setItems((prev) =>
+          prev.map((q) =>
+            q.id === next.id
+              ? {
+                  ...q,
+                  likeCount: next.likeCount,
+                  likedByMe: next.likedByMe,
+                }
+              : q,
+          ),
+        );
+      } else {
+        await load();
+      }
+    } finally {
+      setLikePending(null);
+    }
   }
 
   async function remove(id: string) {
     setItems((prev) => prev.filter((q) => q.id !== id));
-    const res = await fetch(`/api/qa/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/qa/${id}`, {
+      method: "DELETE",
+      headers: deviceHeaders(),
+    });
     if (res.ok) await load();
   }
 
@@ -180,7 +213,10 @@ export default function QaPage() {
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto pb-4">
+        <div
+          ref={listRef}
+          className="flex flex-1 flex-col gap-4 overflow-y-auto pb-4"
+        >
           {visible.length === 0 ? (
             <p className="mt-10 text-center text-[14px] text-[#9da1ab]">
               Пока нет вопросов — задайте первый
@@ -191,7 +227,8 @@ export default function QaPage() {
               return (
                 <div
                   key={q.id}
-                  className={`qa-card flex flex-col gap-2.5 rounded-[20px] bg-white/40 p-5 hover:bg-white/55 hover:-translate-y-0.5 ${
+                  data-flip-id={q.id}
+                  className={`qa-card flex flex-col gap-2.5 rounded-[20px] bg-white/40 p-5 hover:bg-white/55 ${
                     entering ? "qa-card-enter" : ""
                   }`}
                 >
@@ -202,7 +239,8 @@ export default function QaPage() {
                     <button
                       type="button"
                       onClick={() => like(q.id)}
-                      className="flex items-center gap-1 transition-opacity duration-200 hover:opacity-100"
+                      disabled={likePending === q.id}
+                      className="flex items-center gap-1 transition-opacity duration-200 hover:opacity-100 disabled:opacity-80"
                     >
                       <img
                         src="/assets/like.svg"

@@ -15,14 +15,20 @@ function mapQuestion(row: DbQuestion): Question {
   };
 }
 
-export function publicQuestion(q: Question, viewerKey?: string) {
+export function publicQuestion(q: Question, viewerKeys?: string | string[]) {
+  const aliases = Array.isArray(viewerKeys)
+    ? viewerKeys
+    : viewerKeys
+      ? [viewerKeys]
+      : [];
+  const uniqueLikes = [...new Set(q.likes)];
   return {
     id: q.id,
     text: q.text,
     authorLabel: q.authorLabel,
-    likeCount: q.likes.length,
-    likedByMe: viewerKey ? q.likes.includes(viewerKey) : false,
-    isMine: viewerKey ? q.authorKey === viewerKey : false,
+    likeCount: uniqueLikes.length,
+    likedByMe: aliases.some((key) => uniqueLikes.includes(key)),
+    isMine: aliases.some((key) => q.authorKey === key),
     status: q.status,
     createdAt: q.createdAt,
     answeredAt: q.answeredAt,
@@ -45,7 +51,7 @@ export async function listQuestions(options?: {
   if (!options?.popularFirst) return mapped;
   return [...mapped].sort(
     (a, b) =>
-      b.likes.length - a.likes.length ||
+      [...new Set(b.likes)].length - [...new Set(a.likes)].length ||
       +new Date(b.createdAt) - +new Date(a.createdAt),
   );
 }
@@ -71,20 +77,27 @@ export async function createQuestion(input: {
   return mapQuestion(row);
 }
 
-export async function toggleLike(id: string, viewerKey: string) {
-  const current = await prisma.question.findUnique({ where: { id } });
-  if (!current || current.status === "hidden") return null;
+export async function toggleLike(id: string, viewerKeys: string | string[]) {
+  const aliases = [...new Set((Array.isArray(viewerKeys) ? viewerKeys : [viewerKeys]).filter(Boolean))];
+  const canonical = aliases[0];
+  if (!canonical) return null;
 
-  const liked = current.likes.includes(viewerKey);
-  const likes = liked
-    ? current.likes.filter((k) => k !== viewerKey)
-    : [...current.likes, viewerKey];
+  return prisma.$transaction(async (tx) => {
+    const current = await tx.question.findUnique({ where: { id } });
+    if (!current || current.status === "hidden") return null;
 
-  const row = await prisma.question.update({
-    where: { id },
-    data: { likes },
+    const uniqueLikes = [...new Set(current.likes)];
+    const liked = aliases.some((key) => uniqueLikes.includes(key));
+    const likes = liked
+      ? uniqueLikes.filter((key) => !aliases.includes(key))
+      : [...uniqueLikes, canonical];
+
+    const row = await tx.question.update({
+      where: { id },
+      data: { likes },
+    });
+    return mapQuestion(row);
   });
-  return mapQuestion(row);
 }
 
 export type ProjectorMode = "idle" | "list" | "focus";
@@ -150,12 +163,17 @@ export async function updateQuestionStatus(id: string, status: QuestionStatus) {
 
 export async function deleteQuestion(
   id: string,
-  authorKey?: string,
+  authorKey?: string | string[],
   asAdmin = false,
 ) {
   const current = await prisma.question.findUnique({ where: { id } });
   if (!current) return null;
-  if (!asAdmin && current.authorKey !== authorKey) {
+  const authorKeys = Array.isArray(authorKey)
+    ? authorKey
+    : authorKey
+      ? [authorKey]
+      : [];
+  if (!asAdmin && !authorKeys.includes(current.authorKey)) {
     throw new Error("FORBIDDEN");
   }
 
