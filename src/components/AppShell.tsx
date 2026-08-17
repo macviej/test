@@ -9,6 +9,7 @@ type Props = {
   onBack?: () => void;
   headerLeft?: ReactNode;
   headerRight?: ReactNode;
+  wide?: boolean;
 };
 
 export function AppShell({
@@ -18,6 +19,7 @@ export function AppShell({
   onBack,
   headerLeft,
   headerRight,
+  wide = false,
 }: Props) {
   const backControl = onBack ? (
     <button
@@ -59,7 +61,11 @@ export function AppShell({
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[402px] flex-col px-5 pb-8 pt-5">
+      <div
+        className={`relative z-10 mx-auto flex h-full w-full flex-col pb-8 pt-5 ${
+          wide ? "max-w-[1440px] px-5 md:px-8" : "max-w-[402px] px-5"
+        }`}
+      >
         <header className="relative z-[100] mb-8 flex h-10 shrink-0 items-center justify-center overflow-visible">
           {showBack || headerLeft ? (
             <div className="absolute left-0 top-1/2 z-[100] flex -translate-y-1/2 items-center gap-2">
