@@ -7,6 +7,12 @@ import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { findTicketCopy } from "@/lib/i18n";
+import {
+  BY_PHONE_PREFIX,
+  formatNationalPhone,
+  nationalPhoneDigits,
+  toStoredByPhone,
+} from "@/lib/phone";
 import { useLocale } from "@/lib/use-locale";
 
 export default function FindTicketPage() {
@@ -14,7 +20,7 @@ export default function FindTicketPage() {
   const { locale, setLocale } = useLocale();
   const t = findTicketCopy[locale];
   const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("+375");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +37,7 @@ export default function FindTicketPage() {
       const res = await fetch("/api/ticket/find", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lastName, phone }),
+        body: JSON.stringify({ lastName, phone: toStoredByPhone(phone) }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -81,17 +87,12 @@ export default function FindTicketPage() {
           />
           <Field
             label={t.phone}
-            prefix="+375"
-            placeholder="291112233"
+            prefix={`${BY_PHONE_PREFIX} `}
+            placeholder="29 123 45 67"
             type="tel"
             inputMode="tel"
-            value={phone.replace(/^\+375/, "")}
-            onChange={(e) => {
-              let digits = e.target.value.replace(/\D/g, "");
-              if (digits.startsWith("375")) digits = digits.slice(3);
-              if (digits.startsWith("80")) digits = digits.slice(2);
-              setPhone(`+375${digits}`);
-            }}
+            value={formatNationalPhone(phone)}
+            onChange={(e) => setPhone(nationalPhoneDigits(e.target.value))}
             autoComplete="tel"
             required
           />

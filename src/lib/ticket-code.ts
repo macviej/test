@@ -1,4 +1,4 @@
-const CODE_RE = /IGC-2026-\d{3,}/i;
+const CODE_RE = /(?:IDC|IGC)-2026-\d{3,}/i;
 
 export function extractParticipantCode(raw: string): string | null {
   const text = raw.trim();
@@ -17,6 +17,6 @@ export function extractParticipantCode(raw: string): string | null {
   }
 
   const normalized = text.toUpperCase().replace(/^#/, "");
-  if (/^IGC-2026-\d{3,}$/.test(normalized)) return normalized;
+  if (/^(?:IDC|IGC)-2026-\d{3,}$/.test(normalized)) return normalized;
   return null;
 }

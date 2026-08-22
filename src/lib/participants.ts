@@ -21,6 +21,10 @@ function mapParticipant(row: DbParticipant): Participant {
     lunchType: parseLunchType(row.lunchType),
     hasAllergy: row.hasAllergy,
     allergyNote: row.allergyNote,
+    city: row.city,
+    church: row.church,
+    howHeard: row.howHeard,
+    extraInfo: row.extraInfo,
     checkedIn: row.checkedIn,
     checkedInAt: row.checkedInAt ? row.checkedInAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
@@ -33,7 +37,7 @@ async function nextCode() {
     create: { id: "participants", value: 1 },
     update: { value: { increment: 1 } },
   });
-  return `IGC-2026-${String(counter.value).padStart(3, "0")}`;
+  return `IDC-2026-${String(counter.value).padStart(3, "0")}`;
 }
 
 export async function createParticipant(
@@ -56,6 +60,10 @@ export async function createParticipant(
         input.needsLunch && input.hasAllergy
           ? input.allergyNote.trim()
           : "",
+      city: input.city.trim(),
+      church: input.church.trim(),
+      howHeard: input.howHeard.trim(),
+      extraInfo: input.extraInfo.trim(),
     },
   });
   return mapParticipant(row);

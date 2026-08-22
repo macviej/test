@@ -27,6 +27,18 @@ export async function ensureAppSchema() {
       await prisma.$executeRawUnsafe(
         `ALTER TABLE "Participant" ADD COLUMN IF NOT EXISTS "allergyNote" TEXT NOT NULL DEFAULT ''`,
       );
+      await prisma.$executeRawUnsafe(
+        `ALTER TABLE "Participant" ADD COLUMN IF NOT EXISTS "city" TEXT NOT NULL DEFAULT ''`,
+      );
+      await prisma.$executeRawUnsafe(
+        `ALTER TABLE "Participant" ADD COLUMN IF NOT EXISTS "church" TEXT NOT NULL DEFAULT ''`,
+      );
+      await prisma.$executeRawUnsafe(
+        `ALTER TABLE "Participant" ADD COLUMN IF NOT EXISTS "howHeard" TEXT NOT NULL DEFAULT ''`,
+      );
+      await prisma.$executeRawUnsafe(
+        `ALTER TABLE "Participant" ADD COLUMN IF NOT EXISTS "extraInfo" TEXT NOT NULL DEFAULT ''`,
+      );
       await prisma.$executeRawUnsafe(`
         CREATE TABLE IF NOT EXISTS "ProjectorState" (
           "id" TEXT NOT NULL DEFAULT 'default',

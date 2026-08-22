@@ -32,6 +32,10 @@ export async function POST(request: Request) {
     const hasAllergy =
       typeof body.hasAllergy === "boolean" ? body.hasAllergy : null;
     const allergyNote = body.allergyNote?.trim() ?? "";
+    const city = body.city?.trim() ?? "";
+    const church = body.church?.trim() ?? "";
+    const howHeard = body.howHeard?.trim() ?? "";
+    const extraInfo = body.extraInfo?.trim() ?? "";
     const consent = Boolean(body.consent);
 
     if (!firstName || !lastName || !phone || !email) {
@@ -83,6 +87,10 @@ export async function POST(request: Request) {
       lunchType,
       hasAllergy,
       allergyNote,
+      city,
+      church,
+      howHeard,
+      extraInfo,
       consent,
     });
 

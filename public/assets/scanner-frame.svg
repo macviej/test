@@ -1,8 +1,8 @@
 <svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="236" height="236" viewBox="0 0 236 236" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Frame">
-<path id="Rectangle 19" d="M42 2H22C10.9543 2 2 10.9543 2 22V42" stroke="#C3C8D4" stroke-width="4"/>
-<path id="Rectangle 21" d="M42 234H22C10.9543 234 2 225.046 2 214V194" stroke="#C3C8D4" stroke-width="4"/>
-<path id="Rectangle 20" d="M194 2H214C225.046 2 234 10.9543 234 22V42" stroke="#C3C8D4" stroke-width="4"/>
-<path id="Rectangle 22" d="M194 234H214C225.046 234 234 225.046 234 214V194" stroke="#C3C8D4" stroke-width="4"/>
+<path id="Rectangle 19" d="M48 2H28C13.6406 2 2 13.6406 2 28V48" stroke="#C3C8D4" stroke-width="4" stroke-linecap="round"/>
+<path id="Rectangle 21" d="M48 234H28C13.6406 234 2 222.359 2 208V188" stroke="#C3C8D4" stroke-width="4" stroke-linecap="round"/>
+<path id="Rectangle 20" d="M188 2H208C222.359 2 234 13.6406 234 28V48" stroke="#C3C8D4" stroke-width="4" stroke-linecap="round"/>
+<path id="Rectangle 22" d="M188 234H208C222.359 234 234 222.359 234 208V188" stroke="#C3C8D4" stroke-width="4" stroke-linecap="round"/>
 </g>
 </svg>

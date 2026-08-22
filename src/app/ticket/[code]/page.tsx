@@ -8,7 +8,8 @@ import { Button } from "@/components/Button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Overlay } from "@/components/Overlay";
 import { SocialLinks } from "@/components/SocialLinks";
-import { getTicketCtaMode, ticketCopy } from "@/lib/i18n";
+import { getTicketCtaMode, registerCopy, ticketCopy } from "@/lib/i18n";
+import { formatFullByPhone } from "@/lib/phone";
 import { useLocale } from "@/lib/use-locale";
 import type { LunchType } from "@/lib/types";
 
@@ -24,6 +25,10 @@ type TicketPayload = {
     lunchType: LunchType | null;
     hasAllergy: boolean | null;
     allergyNote: string;
+    city: string;
+    church: string;
+    howHeard: string;
+    extraInfo: string;
   };
   qrDataUrl: string;
 };
@@ -116,7 +121,7 @@ export default function TicketPage() {
         ) : data && p ? (
           <>
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto animate-stage-in">
-              <div className="flex flex-col gap-4 text-center">
+              <div className="flex flex-col gap-3 text-center">
                 <h1 className="text-[20px] font-semibold uppercase leading-7 text-[#eee]">
                   {t.thanks}
                 </h1>
@@ -125,7 +130,7 @@ export default function TicketPage() {
                 </p>
               </div>
 
-              <div className="mx-auto mt-10 flex w-[240px] flex-col items-center gap-4">
+              <div className="mx-auto mt-5 flex w-[240px] flex-col items-center gap-3">
                 <div className="rounded-[16px] bg-white p-3 animate-dialog-in">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -142,30 +147,29 @@ export default function TicketPage() {
             </div>
 
             <div className="mt-auto flex shrink-0 flex-col gap-3 pt-6">
-              <Link href="/qa" className="w-full">
-                <Button type="button" arrow>
-                  {t.askQuestion}
-                </Button>
-              </Link>
               {ctaMode === "invite" ? (
                 <Button type="button" variant="outline" arrow onClick={inviteFriend}>
                   {t.invite}
                 </Button>
-              ) : null}
-              {ctaMode === "invite" ? (
-                <div className="flex flex-col items-center gap-1 pb-1 pt-2 text-center">
-                  <p className="w-full text-[14px] font-light leading-5 text-[#eee]">
-                    {t.cantCome}
-                  </p>
-                  <Button
-                    variant="textArrow"
-                    arrow
-                    type="button"
-                    onClick={() => alert(t.cancelSoon)}
-                  >
-                    {t.cancel}
+              ) : (
+                <Link href="/qa" className="w-full">
+                  <Button type="button" arrow>
+                    {t.askQuestion}
                   </Button>
-                </div>
+                </Link>
+              )}
+              {ctaMode === "invite" ? (
+                <p className="pb-1 pt-2 text-center text-[14px] font-light leading-5 text-[#eee]">
+                  {t.cantCome}{" "}
+                  <a
+                    href={t.organizersHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline decoration-[#eee]/60 underline-offset-2 hover:text-white"
+                  >
+                    {t.organizers}
+                  </a>
+                </p>
               ) : null}
             </div>
           </>
@@ -197,7 +201,7 @@ export default function TicketPage() {
                 <p>
                   {p.firstName} {p.lastName}
                 </p>
-                <p>{p.phone}</p>
+                <p>{formatFullByPhone(p.phone)}</p>
                 {p.telegram ? <p>@{p.telegram.replace(/^@/, "")}</p> : null}
                 <p>{p.email}</p>
               </div>
@@ -209,6 +213,28 @@ export default function TicketPage() {
                   {lunchSummary()}
                 </p>
               </div>
+              {p.city || p.church || p.howHeard || p.extraInfo ? (
+                <div className="flex flex-col gap-2 text-[14px] font-light leading-5 text-[#eee]">
+                  <p className="text-[16px] font-medium leading-5">
+                    {registerCopy[locale].reviewExtra}
+                  </p>
+                  <p>
+                    {[
+                      p.city,
+                      p.church,
+                      p.howHeard &&
+                      p.howHeard in registerCopy[locale].extraHowHeardOptions
+                        ? registerCopy[locale].extraHowHeardOptions[
+                            p.howHeard as keyof typeof registerCopy.RU.extraHowHeardOptions
+                          ]
+                        : p.howHeard,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </p>
+                  {p.extraInfo ? <p>{p.extraInfo}</p> : null}
+                </div>
+              ) : null}
               <div className="flex flex-col items-center gap-3">
                 <p className="text-[14px] font-medium leading-5 text-[#eee]">
                   {t.followUs}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Unbounded } from "next/font/google";
+import { Preloader } from "@/components/Preloader";
 import "./globals.css";
 
 const unbounded = Unbounded({
@@ -20,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={`${unbounded.variable} h-full`}>
-      <body className="min-h-full font-sans antialiased">{children}</body>
+      <body className="min-h-full font-sans antialiased">
+        <Preloader>{children}</Preloader>
+      </body>
     </html>
   );
 }

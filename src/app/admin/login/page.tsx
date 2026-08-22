@@ -75,8 +75,16 @@ export default function AdminLoginPage() {
             <Button type="submit" disabled={loading}>
               {loading ? "Входим..." : "Войти"}
             </Button>
-            <p className="text-[14px] font-light text-[#9da1ab]">
-              Забыли пароль?
+            <p className="text-center text-[14px] font-light text-[#9da1ab]">
+              Забыли пароль?{" "}
+              <a
+                href="https://t.me/ian_sotnichenko"
+                target="_blank"
+                rel="noreferrer"
+                className="underline decoration-[#9da1ab] underline-offset-2 hover:text-[#eee]"
+              >
+                Напишите Яну
+              </a>
             </p>
           </div>
         </form>
