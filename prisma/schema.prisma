@@ -19,6 +19,10 @@ model Participant {
   lunchType   String?
   hasAllergy  Boolean?
   allergyNote String    @default("")
+  city        String    @default("")
+  church      String    @default("")
+  howHeard    String    @default("")
+  extraInfo   String    @default("")
   checkedIn   Boolean   @default(false)
   checkedInAt DateTime?
   createdAt   DateTime  @default(now())

@@ -158,12 +158,8 @@ export default function AdminScannerPage() {
   return (
     <AppShell showBack backHref="/admin">
       <div className="flex min-h-0 flex-1 flex-col items-center">
-        <h1 className="shrink-0 text-center text-[18px] font-medium uppercase leading-6 text-[#eee]">
-          Сканер
-        </h1>
-
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6">
-          <div className="relative size-[232px] overflow-hidden rounded-[28px] bg-black/40 shadow-[0_0_40px_rgba(20,76,205,0.25)]">
+          <div className="relative size-[232px] overflow-hidden rounded-[36px] bg-black/40 shadow-[0_0_40px_rgba(20,76,205,0.25)]">
             <div
               id="admin-qr-reader"
               className="absolute inset-0 overflow-hidden [&_video]:h-full [&_video]:w-full [&_video]:object-cover"
@@ -213,7 +209,7 @@ export default function AdminScannerPage() {
               <input
                 value={manualCode}
                 onChange={(e) => setManualCode(e.target.value)}
-                placeholder="IGC-2026-001"
+                placeholder="IDC-2026-001"
                 className="w-full rounded-[20px] border border-[#eee] bg-transparent px-5 py-3 text-center text-[14px] text-[#eee] outline-none placeholder:text-[#9da1ab] transition-colors duration-200 hover:border-white/80 focus:border-white"
               />
               <Button

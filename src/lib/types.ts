@@ -1,5 +1,7 @@
 export type LunchType = "standard" | "vegan";
 
+export type HowHeard = "social" | "church" | "friends" | "other";
+
 export type Participant = {
   id: string;
   code: string;
@@ -12,6 +14,10 @@ export type Participant = {
   lunchType: LunchType | null;
   hasAllergy: boolean | null;
   allergyNote: string;
+  city: string;
+  church: string;
+  howHeard: string;
+  extraInfo: string;
   checkedIn: boolean;
   checkedInAt: string | null;
   createdAt: string;
@@ -27,6 +33,10 @@ export type RegisterInput = {
   lunchType: LunchType | null;
   hasAllergy: boolean | null;
   allergyNote: string;
+  city: string;
+  church: string;
+  howHeard: string;
+  extraInfo: string;
   consent: boolean;
 };
 

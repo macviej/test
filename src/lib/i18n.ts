@@ -159,8 +159,23 @@ export const registerCopy: Record<
     lunchAllergy: string;
     lunchAllergyDetails: string;
     extraTitle: string;
+    extraCity: string;
+    extraChurch: string;
+    extraHowHeard: string;
+    extraHowHeardPlaceholder: string;
+    extraHowHeardOptions: Record<
+      "social" | "church" | "friends" | "other",
+      string
+    >;
+    extraNote: string;
+    extraNoteHint: string;
     extraBody: string;
     reviewTitle: string;
+    reviewData: string;
+    reviewExtra: string;
+    donationNote: string;
+    lunchPriceNote: string;
+    lunchKindHint: string;
     confirm: string;
     yes: string;
     no: string;
@@ -189,13 +204,32 @@ export const registerCopy: Record<
     lunchQuestion: "Нужен ли вам обед?",
     lunchKind: "Какой обед?",
     lunchStandard: "Стандарт",
-    lunchVegan: "Веган",
+    lunchVegan: "Вегетарианский",
     lunchAllergy: "Есть ли аллергия?",
-    lunchAllergyDetails: "На какие",
+    lunchAllergyDetails: "На какие продукты?",
     extraTitle: "Дополнительная информация",
-    extraBody:
-      "Конференция пройдёт 7 ноября в 10:00 по адресу Боровляны, Первомайская 23.\n\nУчастие — 30 BYN, оплата на стойке регистрации. Сохраните QR-код — это ваш пропуск.",
-    reviewTitle: "Проверка данных",
+    extraCity: "Из какого вы города?",
+    extraChurch: "Из какой вы церкви?",
+    extraHowHeard: "Как вы узнали о конференции?",
+    extraHowHeardPlaceholder: "Из соцсетей",
+    extraHowHeardOptions: {
+      social: "Из соцсетей",
+      church: "В церкви",
+      friends: "От друзей",
+      other: "Другое",
+    },
+    extraNote: "Дополнительная информация",
+    extraNoteHint:
+      "Если есть дополнительная информация или комментарии, которые вы хотели бы предоставить, пожалуйста, напишите",
+    extraBody: "",
+    reviewTitle: "Проверьте, пожалуйста, правильность ваших данных",
+    reviewData: "Данные",
+    reviewExtra: "Дополнительно",
+    donationNote:
+      "Пожертвование производится на месте перед началом конференции и только наличными белорусскими рублями",
+    lunchPriceNote: "Стоимость с обедом — 30 BYN\nБез обеда — 15 BYN",
+    lunchKindHint:
+      "Стандартный — паста с курицей\nВегетарианский — паста овощная",
     confirm: "Зарегистрироваться",
     yes: "Да",
     no: "Нет",
@@ -223,13 +257,32 @@ export const registerCopy: Record<
     lunchQuestion: "Ці патрэбны вам абед?",
     lunchKind: "Які абед?",
     lunchStandard: "Стандарт",
-    lunchVegan: "Веган",
+    lunchVegan: "Вегетарыянскі",
     lunchAllergy: "Ці ёсць алергія?",
-    lunchAllergyDetails: "На што",
+    lunchAllergyDetails: "На якія прадукты?",
     extraTitle: "Дадатковая інфармацыя",
-    extraBody:
-      "Канферэнцыя пройдзе 7 лістапада а 10:00 па адрасе Бараўляны, Першамайская 23.\n\nУдзел — 30 BYN, аплата на стойцы рэгістрацыі. Захавайце QR-код — гэта ваш пропуск.",
-    reviewTitle: "Праверка даных",
+    extraCity: "З якога вы горада?",
+    extraChurch: "З якой вы царквы?",
+    extraHowHeard: "Як вы даведаліся пра канферэнцыю?",
+    extraHowHeardPlaceholder: "З сацсетак",
+    extraHowHeardOptions: {
+      social: "З сацсетак",
+      church: "У царкве",
+      friends: "Ад сяброў",
+      other: "Іншае",
+    },
+    extraNote: "Дадатковая інфармацыя",
+    extraNoteHint:
+      "Калі ёсць дадатковая інфармацыя ці каментары, якія вы хацелі б пакінуць, калі ласка, напішыце",
+    extraBody: "",
+    reviewTitle: "Праверце, калі ласка, правільнасць вашых даных",
+    reviewData: "Даныя",
+    reviewExtra: "Дадаткова",
+    donationNote:
+      "Ахвяраванне прымаецца на месцы перад пачаткам канферэнцыі і толькі наяўнымі беларускімі рублямі",
+    lunchPriceNote: "Кошт з абедам — 30 BYN\nБез абеду — 15 BYN",
+    lunchKindHint:
+      "Стандартны — паста з курыцай\nВегетарыянскі — паста гароднінная",
     confirm: "Зарэгістравацца",
     yes: "Так",
     no: "Не",
@@ -257,13 +310,32 @@ export const registerCopy: Record<
     lunchQuestion: "Do you need lunch?",
     lunchKind: "Which lunch?",
     lunchStandard: "Standard",
-    lunchVegan: "Vegan",
+    lunchVegan: "Vegetarian",
     lunchAllergy: "Any allergies?",
-    lunchAllergyDetails: "Which ones",
+    lunchAllergyDetails: "Which products?",
     extraTitle: "Additional information",
-    extraBody:
-      "The conference is on November 7 at 10:00 at Borovlyany, Pervomayskaya 23.\n\nAdmission is 30 BYN, paid at the registration desk. Keep your QR code — it is your pass.",
-    reviewTitle: "Review your details",
+    extraCity: "Which city are you from?",
+    extraChurch: "Which church are you from?",
+    extraHowHeard: "How did you hear about the conference?",
+    extraHowHeardPlaceholder: "From social media",
+    extraHowHeardOptions: {
+      social: "From social media",
+      church: "At church",
+      friends: "From friends",
+      other: "Other",
+    },
+    extraNote: "Additional information",
+    extraNoteHint:
+      "If you have extra information or comments you would like to share, please write them here",
+    extraBody: "",
+    reviewTitle: "Please check that your details are correct",
+    reviewData: "Details",
+    reviewExtra: "Additional",
+    donationNote:
+      "The donation is made on site before the conference starts and in cash Belarusian rubles only",
+    lunchPriceNote: "With lunch — 30 BYN\nWithout lunch — 15 BYN",
+    lunchKindHint:
+      "Standard — pasta with chicken\nVegetarian — vegetable pasta",
     confirm: "Register",
     yes: "Yes",
     no: "No",
@@ -337,8 +409,8 @@ export const ticketCopy: Record<
     inviteShare: string;
     linkCopied: string;
     cantCome: string;
-    cancel: string;
-    cancelSoon: string;
+    organizers: string;
+    organizersHref: string;
     info: string;
     close: string;
     yourData: string;
@@ -363,9 +435,9 @@ export const ticketCopy: Record<
     askQuestion: "Задать вопрос",
     inviteShare: "Присоединяйся к Imago Dei Conf 2026!",
     linkCopied: "Ссылка скопирована",
-    cantCome: "Не получается прийти?",
-    cancel: "Отменить регистрацию",
-    cancelSoon: "Отмена регистрации будет доступна позже",
+    cantCome: "Не получается прийти? Напишите, пожалуйста,",
+    organizers: "организаторам",
+    organizersHref: "https://t.me/ian_sotnichenko",
     info: "Информация",
     close: "Закрыть",
     yourData: "Ваши данные",
@@ -373,7 +445,7 @@ export const ticketCopy: Record<
     lunchYes: "Нужен",
     lunchNo: "Не нужен",
     lunchStandard: "Стандарт",
-    lunchVegan: "Веган",
+    lunchVegan: "Вегетарианский",
     allergy: "Аллергия",
     allergyNone: "Нет",
     followUs: "Мы в соцсетях",
@@ -389,9 +461,9 @@ export const ticketCopy: Record<
     askQuestion: "Задаць пытанне",
     inviteShare: "Далучайся да Imago Dei Conf 2026!",
     linkCopied: "Спасылка скапіявана",
-    cantCome: "Не можаш прыйсці?",
-    cancel: "Адмяніць рэгістрацыю",
-    cancelSoon: "Адмена рэгістрацыі будзе даступная пазней",
+    cantCome: "Не можаш прыйсці? Напішы, калі ласка,",
+    organizers: "арганізатарам",
+    organizersHref: "https://t.me/ian_sotnichenko",
     info: "Інфармацыя",
     close: "Закрыць",
     yourData: "Вашы даныя",
@@ -399,7 +471,7 @@ export const ticketCopy: Record<
     lunchYes: "Патрэбны",
     lunchNo: "Не патрэбны",
     lunchStandard: "Стандарт",
-    lunchVegan: "Веган",
+    lunchVegan: "Вегетарыянскі",
     allergy: "Алергія",
     allergyNone: "Не",
     followUs: "Мы ў сацсетках",
@@ -415,9 +487,9 @@ export const ticketCopy: Record<
     askQuestion: "Ask a question",
     inviteShare: "Join Imago Dei Conf 2026!",
     linkCopied: "Link copied",
-    cantCome: "Can't make it?",
-    cancel: "Cancel registration",
-    cancelSoon: "Registration cancellation will be available later",
+    cantCome: "Can't make it? Please write to the",
+    organizers: "organizers",
+    organizersHref: "https://t.me/ian_sotnichenko",
     info: "Information",
     close: "Close",
     yourData: "Your details",
@@ -425,7 +497,7 @@ export const ticketCopy: Record<
     lunchYes: "Needed",
     lunchNo: "Not needed",
     lunchStandard: "Standard",
-    lunchVegan: "Vegan",
+    lunchVegan: "Vegetarian",
     allergy: "Allergies",
     allergyNone: "None",
     followUs: "Follow us",

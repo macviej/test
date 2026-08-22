@@ -127,11 +127,10 @@ export default function ProjectorScreenPage() {
           key={mode}
           className="relative z-10 flex h-full w-full qa-screen-fade"
         >
+          <div className="pointer-events-none absolute inset-x-0 top-[60px] z-20 flex justify-center">
+            <Logo href={null} size="lg" />
+          </div>
           <div className="relative min-w-0 flex-1 px-[100px] pb-16 pt-[60px]">
-            <div className="pointer-events-none absolute left-1/2 top-[60px] z-20 -translate-x-1/2">
-              <Logo href={null} size="lg" />
-            </div>
-
             {mode === "idle" || !data ? (
               <div className="flex h-full items-center">
                 <p className="qa-focus-enter max-w-[820px] text-[clamp(28px,3.2vw,44px)] font-light leading-[1.25] text-[#eee]">

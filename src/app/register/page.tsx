@@ -4,20 +4,28 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
-import { Field } from "@/components/Field";
+import { Field, SelectField, TextAreaField } from "@/components/Field";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Stage } from "@/components/Stage";
-import { getRegistrationStatus, getWelcomeCopy, registerCopy } from "@/lib/i18n";
+import { getRegistrationStatus, registerCopy } from "@/lib/i18n";
+import {
+  BY_PHONE_PREFIX,
+  formatFullByPhone,
+  formatNationalPhone,
+  nationalPhoneDigits,
+  toStoredByPhone,
+} from "@/lib/phone";
 import { useLocale } from "@/lib/use-locale";
-import type { LunchType } from "@/lib/types";
+import type { HowHeard, LunchType } from "@/lib/types";
 
 type Step = 1 | 2 | 3 | 4;
+
+const HOW_HEARD: HowHeard[] = ["social", "church", "friends", "other"];
 
 export default function RegisterPage() {
   const router = useRouter();
   const { locale, setLocale } = useLocale();
   const t = registerCopy[locale];
-  const chips = getWelcomeCopy(locale, "open").chips;
   const [step, setStep] = useState<Step>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -32,6 +40,10 @@ export default function RegisterPage() {
     lunchType: null as LunchType | null,
     hasAllergy: null as boolean | null,
     allergyNote: "",
+    city: "",
+    church: "",
+    howHeard: "" as HowHeard | "",
+    extraInfo: "",
   });
 
   useEffect(() => {
@@ -65,7 +77,7 @@ export default function RegisterPage() {
       if (
         !form.firstName.trim() ||
         !form.lastName.trim() ||
-        !form.phone.trim() ||
+        nationalPhoneDigits(form.phone).length < 9 ||
         !form.email.trim()
       ) {
         setError(t.errRequired);
@@ -114,7 +126,7 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          phone: `+375${form.phone.replace(/\D/g, "")}`,
+          phone: toStoredByPhone(form.phone),
           telegram: form.telegram.replace(/^@/, ""),
           lunchType: form.needsLunch ? form.lunchType : null,
           hasAllergy: form.needsLunch ? form.hasAllergy : null,
@@ -143,20 +155,10 @@ export default function RegisterPage() {
     }
   }
 
-  const lunchLabel =
-    form.needsLunch === null
-      ? "—"
-      : form.needsLunch
-        ? [
-            t.yes,
-            form.lunchType === "vegan" ? t.lunchVegan : t.lunchStandard,
-            form.hasAllergy
-              ? `${t.lunchAllergyDetails}: ${form.allergyNote}`
-              : t.no,
-          ]
-            .filter(Boolean)
-            .join(" · ")
-        : t.no;
+  const extraSummary = [form.city, form.church, form.howHeard ? t.extraHowHeardOptions[form.howHeard] : ""]
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <AppShell
@@ -195,15 +197,10 @@ export default function RegisterPage() {
               />
               <Field
                 label={t.phone}
-                prefix="+375"
-                placeholder="291112233"
-                value={form.phone}
-                onChange={(e) => {
-                  let digits = e.target.value.replace(/\D/g, "");
-                  if (digits.startsWith("375")) digits = digits.slice(3);
-                  if (digits.startsWith("80")) digits = digits.slice(2);
-                  update("phone", digits);
-                }}
+                prefix={`${BY_PHONE_PREFIX} `}
+                placeholder="29 123 45 67"
+                value={formatNationalPhone(form.phone)}
+                onChange={(e) => update("phone", nationalPhoneDigits(e.target.value))}
                 required
                 inputMode="tel"
                 autoComplete="tel-national"
@@ -280,6 +277,9 @@ export default function RegisterPage() {
                 }
               }}
             />
+            <p className="whitespace-pre-line text-[12px] font-light leading-4 text-[#9da1ab]">
+              {t.lunchPriceNote}
+            </p>
 
             {form.needsLunch ? (
               <>
@@ -309,6 +309,9 @@ export default function RegisterPage() {
                       {t.lunchVegan}
                     </Button>
                   </div>
+                  <p className="whitespace-pre-line text-[12px] font-light leading-4 text-[#9da1ab]">
+                    {t.lunchKindHint}
+                  </p>
                 </div>
 
                 <Choice
@@ -352,19 +355,35 @@ export default function RegisterPage() {
             <h1 className="text-[18px] font-medium leading-6 text-[#eee]">
               {t.extraTitle}
             </h1>
-            <p className="whitespace-pre-line text-[14px] font-light leading-5 text-[#eee]">
-              {t.extraBody}
-            </p>
-            <div className="flex flex-wrap content-start items-start gap-2">
-              {chips.map((chip) => (
-                <span
-                  key={chip}
-                  className="rounded-[20px] border border-[#eee] px-4 py-2 text-[12px] font-medium leading-4 text-[#eee]"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
+            <Field
+              label={t.extraCity}
+              placeholder={t.extraCity}
+              value={form.city}
+              onChange={(e) => update("city", e.target.value)}
+            />
+            <Field
+              label={t.extraChurch}
+              placeholder={t.extraChurch}
+              value={form.church}
+              onChange={(e) => update("church", e.target.value)}
+            />
+            <SelectField
+              label={t.extraHowHeard}
+              placeholder={t.extraHowHeardPlaceholder}
+              value={form.howHeard}
+              onChange={(e) => update("howHeard", e.target.value as HowHeard)}
+              options={HOW_HEARD.map((value) => ({
+                value,
+                label: t.extraHowHeardOptions[value],
+              }))}
+            />
+            <TextAreaField
+              label={t.extraNote}
+              placeholder={t.extraNote}
+              hint={t.extraNoteHint}
+              value={form.extraInfo}
+              onChange={(e) => update("extraInfo", e.target.value)}
+            />
           </div>
           <div className="absolute inset-x-0 bottom-0">
             <Button type="button" onClick={() => goNext()}>
@@ -380,17 +399,44 @@ export default function RegisterPage() {
             <h1 className="text-[18px] font-medium leading-6 text-[#eee]">
               {t.reviewTitle}
             </h1>
-            <div className="flex flex-col gap-3 text-[14px] font-light leading-5 text-[#eee]">
-              <p>
-                {form.firstName} {form.lastName}
-              </p>
-              <p>+375{form.phone}</p>
-              {form.telegram ? <p>@{form.telegram}</p> : null}
-              <p>{form.email}</p>
-              <p>
-                {t.lunchTitle}: {lunchLabel}
-              </p>
+            <div className="flex flex-col gap-4 text-[14px] font-light leading-5 text-[#eee]">
+              <div className="flex flex-col gap-2">
+                <p className="text-[14px] font-medium">{t.reviewData}</p>
+                <p>
+                  {form.firstName} {form.lastName}
+                </p>
+                <p>{formatFullByPhone(form.phone)}</p>
+                {form.telegram ? <p>@{form.telegram}</p> : null}
+                <p>{form.email}</p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <p className="text-[14px] font-medium">{t.lunchTitle}</p>
+                {form.needsLunch ? (
+                  <>
+                    <p>
+                      {form.lunchType === "vegan" ? t.lunchVegan : t.lunchStandard}
+                    </p>
+                    <p>
+                      {form.hasAllergy
+                        ? `${t.lunchAllergyDetails}: ${form.allergyNote}`
+                        : `${t.lunchAllergy}: ${t.no}`}
+                    </p>
+                  </>
+                ) : (
+                  <p>{t.no}</p>
+                )}
+              </div>
+              {extraSummary || form.extraInfo ? (
+                <div className="flex flex-col gap-2">
+                  <p className="text-[14px] font-medium">{t.reviewExtra}</p>
+                  {extraSummary ? <p>{extraSummary}</p> : null}
+                  {form.extraInfo ? <p>{form.extraInfo}</p> : null}
+                </div>
+              ) : null}
             </div>
+            <p className="text-[12px] font-light leading-4 text-[#9da1ab]">
+              {t.donationNote}
+            </p>
           </div>
 
           {error ? <p className="text-[13px] text-[#d15a32]">{error}</p> : null}
